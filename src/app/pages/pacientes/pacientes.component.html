@@ -1,0 +1,193 @@
+<app-superior></app-superior>
+<!--<div class="container-fluit" style="background-color: aquamarine; width: 200px; height: 100vh"></div>-->
+
+<div class="container">
+  <br>
+  <div class="card">
+    <div class="card-body" style="display: flex; align-items: center;">
+        <i class="uil uil-user-plus" style="font-size: 40px;"></i>
+      <div style="margin-left: 20px;">
+        <h4 class="card-title">Nuevo paciente</h4>
+        <p class="card-subtitle mb-2 text-muted">{{fechaActual | date: 'dd/MM/yyyy' }}</p>
+      </div>
+    </div>
+  </div>
+    
+    <form [formGroup]="formuregistro" (ngSubmit)="enviar()">
+      <div class="row">
+        
+          <div class="col-md-6">
+            <main class="px-3">
+              <div class="mb-3">
+                <label for="nombre" class="form-label">Nombre completo</label>
+                <input type="text" class="form-control" id="nombre" formControlName="nombre" >
+                <div  class="text-danger" *ngIf="formuregistro.get('nombre')?.invalid && formuregistro.get('nombre')?.touched">
+                  <div *ngIf="this.formuregistro.get('nombre')?.hasError('required');">Nombre es requerido.</div>
+                  <div *ngIf="this.formuregistro.get('nombre')?.hasError('minlength');">Ingrese un nombre mayor a 6 caracteres.</div>
+                  <div *ngIf="this.formuregistro.get('nombre')?.hasError('maxlength');">Limite excedido.</div>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="identificacion" class="form-label">Documento identidad</label>
+                <input type="text" class="form-control" id="identificacion" name="identificacion" formControlName="identificacion">
+                <div  class="text-danger" *ngIf="formuregistro.get('identificacion')?.invalid && formuregistro.get('identificacion')?.touched">
+                  <div *ngIf="this.formuregistro.get('identificacion')?.hasError('required');">Numero documento es requerido.</div>
+                  <div *ngIf="this.formuregistro.get('identificacion')?.hasError('minlength');">Documento invalido.</div>
+                  <div *ngIf="this.formuregistro.get('identificacion')?.hasError('maxlength');">Limite excedido.</div>
+                </div>
+              </div>
+            </main>
+          </div>
+          <div class="col-md-6">
+            <main class="px-3">
+              <div class="mb-3">
+                <label for="apellidos" class="form-label">Apellidos completo</label>
+                <input type="text" class="form-control" id="apellidos" formControlName="apellidos" >
+                <div  class="text-danger" *ngIf="formuregistro.get('apellidos')?.invalid && formuregistro.get('apellidos')?.touched">
+                  <div *ngIf="this.formuregistro.get('apellidos')?.hasError('required');">Apellidos son requeridos.</div>
+                  <div *ngIf="this.formuregistro.get('apellidos')?.hasError('minlength');">Ingrese un apellido valido.</div>
+                  <div *ngIf="this.formuregistro.get('apellidos')?.hasError('maxlength');">Limite excedido.</div>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="correo" class="form-label">Correo electronico</label>
+                <input type="mail" class="form-control" id="correo" name="correo" formControlName="correoelectronico">
+                <div  class="text-danger" *ngIf="formuregistro.get('correoelectronico')?.invalid && formuregistro.get('correoelectronico')?.touched">
+                  <div *ngIf="this.formuregistro.get('correoelectronico')?.hasError('required');">Correo obligatorio.</div>
+                  <div *ngIf="this.formuregistro.get('correoelectronico')?.hasError('minlength');">Ingrese un correo valido.</div>
+                  <div *ngIf="this.formuregistro.get('correoelectronico')?.hasError('maxlength');">Limite excedido.</div>
+                  <div *ngIf="this.formuregistro.get('correoelectronico')?.hasError('email');">Correo no valido.</div>
+                </div>
+              </div>
+            </main>
+          </div>
+          
+        
+      </div>
+      <div class="row">
+        <div class="col-md-2">
+          <main class="px-3">
+            <div class="mb-3">
+              <label for="fnacimiento" class="form-label">Fecha Nacimiento</label>
+              <input type="date" class="form-control" id="fnacimiento" formControlName="fnacimiento" >
+              <div  class="text-danger" *ngIf="formuregistro.get('fnacimiento')?.invalid && formuregistro.get('fnacimiento')?.touched">
+                <div *ngIf="this.formuregistro.get('fnacimiento')?.hasError('required');">Fecha de nacimiento requerido.</div>
+                <div *ngIf="this.formuregistro.get('fnacimiento')?.hasError('minlength');">Ingrese un valor valido.</div>
+                <div *ngIf="this.formuregistro.get('fnacimiento')?.hasError('maxlength');">Limite excedido.</div>
+              </div>
+            </div>
+          </main>
+        </div>
+        <div class="col-md-2">
+          <main class="px-3">
+            <div class="mb-3">
+              <label for="escolaridad" class="form-label">Escolaridad</label>
+              <select class="form-select" id="escolaridad" formControlName="escolaridad">
+                <option value="1">Primaria</option>
+                <option value="2">Bachillerato</option>
+                <option value="3">Tecnico</option>
+                <option value="4">Tecnologo</option>
+                <option value="5">Profesional</option>
+                <option value="6">Especializacion</option>
+              </select>
+              <div  class="text-danger" *ngIf="formuregistro.get('escolaridad')?.invalid && formuregistro.get('escolaridad')?.touched">
+                <div *ngIf="this.formuregistro.get('escolaridad')?.hasError('required');">Escolaridad es requerido.</div>
+                <div *ngIf="this.formuregistro.get('escolaridad')?.hasError('minlength');">Ingrese un valor valido.</div>
+                <div *ngIf="this.formuregistro.get('escolaridad')?.hasError('maxlength');">Limite excedido.</div>
+              </div>
+            </div>
+          </main>
+        </div>
+        <div class="col-md-2">
+          <main class="px-3">
+            <div class="mb-3">
+              <label for="lateralidad" class="form-label">Lateralidad</label>
+              <select class="form-select" id="lateralidad" formControlName="lateralidad">
+                <option value="1">Izquierda</option>
+                <option value="2">Derecha</option>
+              </select>
+              <div  class="text-danger" *ngIf="formuregistro.get('lateralidad')?.invalid && formuregistro.get('lateralidad')?.touched">
+                <div *ngIf="this.formuregistro.get('lateralidad')?.hasError('required');">nombre es requerido.</div>
+                <div *ngIf="this.formuregistro.get('lateralidad')?.hasError('minlength');">Ingrese un valor valido.</div>
+                <div *ngIf="this.formuregistro.get('lateralidad')?.hasError('maxlength');">Limite excedido.</div>
+              </div>
+            </div>
+          </main>
+        </div>
+        <div class="col-md-2">
+          <main class="px-3">
+            <div class="mb-3">
+              <label for="accidentes" class="form-label">No. accidentes</label>
+              <input type="number" min="0" class="form-control" id="accidentes" formControlName="accidentes" >
+              <div  class="text-danger" *ngIf="formuregistro.get('accidentes')?.invalid && formuregistro.get('accidentes')?.touched">
+                <div *ngIf="this.formuregistro.get('accidentes')?.hasError('required');">0 valor minimo.</div>
+                <div *ngIf="this.formuregistro.get('accidentes')?.hasError('minlength');">Ingrese un valor valido.</div>
+                <div *ngIf="this.formuregistro.get('accidentes')?.hasError('maxlength');">Valor no valido.</div>
+              </div>
+            </div>
+          </main>
+        </div>
+        <div class="col-md-2">
+          <main class="px-3">
+            <div class="mb-3">
+              <label for="gravedad" class="form-label">Gravedad</label>
+              <select class="form-select" id="gravedad" formControlName="gravedad">
+                <option value="0">N/A</option>
+                <option value="1">Solo daños</option>
+                <option value="2">Con lesionados</option>
+                <option value="3">Con fallecidos</option>
+              </select>
+              <div  class="text-danger" *ngIf="formuregistro.get('gravedad')?.invalid && formuregistro.get('gravedad')?.touched">
+                <div *ngIf="this.formuregistro.get('gravedad')?.hasError('minlength');">Ingrese un valor valido.</div>
+                <div *ngIf="this.formuregistro.get('gravedad')?.hasError('maxlength');">Limite excedido.</div>
+              </div>
+            </div>
+          </main>
+        </div>
+        
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <main class="px-3">
+            <div class="mb-3">
+              <label for="antecedentes" class="form-label">Antecedentes</label>
+              <textarea class="form-control" id="antecedentes" rows="4" formControlName="antecedentes"></textarea>
+              <div  class="text-danger" *ngIf="formuregistro.get('antecedentes')?.invalid && formuregistro.get('antecedentes')?.touched">
+                <div *ngIf="this.formuregistro.get('antecedentes')?.hasError('maxlength');">Limite excedido.</div>
+              </div>
+            </div>
+          </main>
+        </div>
+        <div class="col-md-2">
+          <main class="px-3">
+          <button type="submit" class="btn btn-primary">Registrar</button>
+          </main>
+        </div>
+      </div>
+    </form>
+</div>
+  
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-4"></div>
+      <div class="col-lg-4">
+  
+        <br>
+        <div class="alert alert-dismissible alert-info" *ngIf="muestraformulario">
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          <strong>
+            
+            <font style="vertical-align: inherit;">¡Aviso!</font>
+            
+          </strong>
+          
+            <font style="vertical-align: inherit;"> Muy importante debe completar todos los campos.</font>
+  
+        </div>
+  
+      </div>
+      <div class="col-lg-4"></div>
+    </div>
+  
+  
+  </div>

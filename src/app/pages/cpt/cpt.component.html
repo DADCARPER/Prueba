@@ -1,0 +1,102 @@
+<div class="container" *ngIf="muestraprograma">
+    <div class="row">
+      <div class="col text-center">
+        
+          <h1  *ngIf="mostrartitulo" >Bienvenido a la prueba CTP.</h1>
+          <br>
+          <p  *ngIf="mostrartitulo" class="lead">Durante la prueba, en la pantalla irán apareciendo letras a velocidad variable. El objetivo de la prueba consiste en pulsar en la pantalla tan rápido como sea posible cada vez que aparezca una letra, exceptuando la letra "X".</p>
+          <p class="lead"></p>
+          
+            <button class="btn btn-lg btn-outline-dark" *ngIf="mostrarBoton" (click)="mostrarTexto()"><i class="bi bi-play-fill"></i>INICIAR</button>
+            <p class="display-1" [ngClass]="{'fade-in': mostrar}" *ngIf="mostrar">{{ textosamostrar[cuentatexto] }}</p>
+          
+        
+      </div>
+    </div>
+  </div>
+  
+  <div class="container text-bg-dark text-center" *ngIf="mostrardivletras" >
+   
+            <span *ngFor="let letra of bloque1; let i = index;" >
+              <div *ngIf="i === tiempoinicio" (click)="tomosegundoymilisegundo();" id="stimulus" class="stimulus" style="width: 100%; height: 100vh;">
+                {{letra}}
+              </div>
+            </span>
+              
+        <!--<p *ngIf="mfase1">FASE 1</p>
+        <p *ngIf="mfase2">FASE 2</p>
+        <p *ngIf="mfase3">FASE 3</p>
+        <p *ngIf="mfase4">FASE 4</p>
+        <p *ngIf="mfase5">FASE 5</p>
+        <p *ngIf="mfase6">FASE 6</p>-->
+      
+  </div>
+  <!--INFORMESFINALES-->
+  <div class="container text-bg-dark" *ngIf="muestrainforme">
+    <div class="row justify-content-start">
+      <div class="col-md-4"></div>
+      <div class="col">
+        <h1>FINAL DE LA PRUEBA.</h1>
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th scope="col"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Medidas</font></font></th>
+              <th scope="col" style="text-align: right;"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Valor Total</font></font></th>  
+            </tr>
+          </thead>
+          <tbody>
+  
+            <tr>
+              <td scope="row"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Omisión</font></font></td>
+              <td style="text-align: right;"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"> {{verOmision}} -- {{verOmisionPorcen.toFixed(2)}} %</font></font></td>
+            </tr>
+            <tr>
+              <td scope="row"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Comisión</font></font></td>
+              <td style="text-align: right;"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"> {{verComision}} -- {{verComisionporcen.toFixed(2)}} %</font></font></td>
+            </tr>
+            <tr>
+              <td scope="row"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Tiempo respuesta</font></font></td>
+              <td style="text-align: right;"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">{{verMLprome}} ms</font></font></td>
+            </tr>
+            <tr>
+              <td scope="row"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Perseveración</font></font></td>
+              <td style="text-align: right;"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"> {{verperseveracion}} -- {{verperseveracionporcen.toFixed(2)}} %</font></font></td>
+            </tr>
+            
+          </tbody>
+        </table>
+        
+      </div>
+      <div class="col-md-4"></div>
+    </div>
+  </div>
+  
+  
+  
+  
+    
+      <div class="col text-center">
+        <footer class="mt-auto text-50">
+          <p>© 2024 Todos los derechos reservados ES&VA Soluciones Integrales S.A.S.</p>
+          <!--<button (click)="muestratodos()">muestrame lo guardado</button>-->
+        </footer>
+      </div>
+    
+  
+  <audio #audioPlayer src="assets/clic-ok.mp3"></audio>
+    
+  
+  <!--
+  <div><p>{{segundos}}</p>{{milisegundos}}</div>
+  <div><h1>{{tiempoinicio}}</h1></div>
+  
+  
+  
+  
+  <button (click)="tomosegundoymilisegundo(8)">
+    Mostrar un mensaje después de dos segundos
+  </button>
+  <button onclick="clearMessage();">Cancelar mensaje antes de que suceda</button>
+  -->
+  
+  

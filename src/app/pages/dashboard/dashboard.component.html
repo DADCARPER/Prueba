@@ -1,0 +1,863 @@
+<app-superior/>
+<br>
+<div class="container">
+    <div class="card">
+        <div class="card-body" style="display: flex; align-items: center;">
+            <i class="uil uil-estate" style="font-size: 40px;"></i>
+          <div style="margin-left: 20px;">
+            <h4 class="card-title">Dashboard</h4>
+            <p class="card-subtitle mb-2 text-muted">{{fechaActual | date: 'dd/MM/yyyy' }}</p>
+          </div>
+          <div class="col-md-2 ms-auto">
+            <form>
+              <div class="mb-3 row">
+                <div class="col-xs-3 col-sm-auto">
+                  
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="row">
+        
+      </div>
+    </div>
+    <br><br>
+    <!-- TABLA DINAMICA-->
+    <ag-grid-angular class="ag-theme-quartz" style="height: 650px;" [rowData]="pacientes" [columnDefs]="colDefs" [pagination]="true"
+    [paginationPageSize]="10" [paginationPageSizeSelector]="[10, 50, 100]" (rowDoubleClicked)="activomodal(myModalContent,$event)">
+ 
+    </ag-grid-angular>
+
+
+</div>
+
+
+<div class="col text-center">
+  <footer class="mt-auto text-50">
+    <p>© 2024 Todos los derechos reservados <a href="https://www.prevencionvialintegral.com/" >ES&VA Soluciones Integrales S.A.S</a>.</p>
+    <!--<button (click)="muestratodos()">muestrame lo guardado</button>-->
+  </footer>
+</div>
+
+
+<!-- Modal -->
+<ng-template #myModalContent let-modal>
+
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-title"><i class="uil uil-edit"></i> Perfil paciente</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close button"
+      aria-describedby="modal-title"
+      (click)="modal.dismiss('Cross click')"
+    ></button>
+  </div>
+  <form [formGroup]="formueditar" (ngSubmit)="guardar()">
+  <div class="modal-body">
+    
+      
+      <div class="row">
+          
+        <div class="col-md-6">
+          
+            <div class="mb-3">
+              <label for="nombre" class="form-label">Nombre completo</label>
+              <input type="text" class="form-control" id="nombre" formControlName="nombre" >
+              <div  class="text-danger" *ngIf="formueditar.get('nombre')?.invalid && formueditar.get('nombre')?.touched">
+                <div *ngIf="this.formueditar.get('nombre')?.hasError('required');">Nombre es requerido.</div>
+                <div *ngIf="this.formueditar.get('nombre')?.hasError('minlength');">Ingrese un nombre mayor a 6 caracteres.</div>
+                <div *ngIf="this.formueditar.get('nombre')?.hasError('maxlength');">Limite excedido.</div>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="identificacion" class="form-label">Documento identidad</label>
+              <input type="text" class="form-control" id="identificacion" name="identificacion" formControlName="identificacion">
+              <div  class="text-danger" *ngIf="formueditar.get('identificacion')?.invalid && formueditar.get('identificacion')?.touched">
+                <div *ngIf="this.formueditar.get('identificacion')?.hasError('required');">Numero documento es requerido.</div>
+                <div *ngIf="this.formueditar.get('identificacion')?.hasError('minlength');">Documento invalido.</div>
+                <div *ngIf="this.formueditar.get('identificacion')?.hasError('maxlength');">Limite excedido.</div>
+              </div>
+            </div>
+          
+        </div>
+        <div class="col-md-6">
+        
+            <div class="mb-3">
+              <label for="apellidos" class="form-label">Apellidos completo</label>
+              <input type="text" class="form-control" id="apellidos" formControlName="apellidos" >
+              <div  class="text-danger" *ngIf="formueditar.get('apellidos')?.invalid && formueditar.get('apellidos')?.touched">
+                <div *ngIf="this.formueditar.get('apellidos')?.hasError('required');">Apellidos son requeridos.</div>
+                <div *ngIf="this.formueditar.get('apellidos')?.hasError('minlength');">Ingrese un apellido valido.</div>
+                <div *ngIf="this.formueditar.get('apellidos')?.hasError('maxlength');">Limite excedido.</div>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="correo" class="form-label">Correo electronico</label>
+              <input type="mail" class="form-control" id="correo" name="correo" formControlName="correoelectronico">
+              <div  class="text-danger" *ngIf="formueditar.get('correoelectronico')?.invalid && formueditar.get('correoelectronico')?.touched">
+                <div *ngIf="this.formueditar.get('correoelectronico')?.hasError('required');">Correo obligatorio.</div>
+                <div *ngIf="this.formueditar.get('correoelectronico')?.hasError('minlength');">Ingrese un correo valido.</div>
+                <div *ngIf="this.formueditar.get('correoelectronico')?.hasError('maxlength');">Limite excedido.</div>
+                <div *ngIf="this.formueditar.get('correoelectronico')?.hasError('email');">Correo no valido.</div>
+              </div>
+            </div>
+          
+        </div>
+        <div class="col-md-6">
+        
+          <div class="mb-3">
+            <label for="direccion" class="form-label">Dirección</label>
+            <input type="text" class="form-control" id="direccion" formControlName="direccion" >
+            <div  class="text-danger" *ngIf="formueditar.get('direccion')?.invalid && formueditar.get('direccion')?.touched">
+              
+              <div *ngIf="this.formueditar.get('direccion')?.hasError('minlength');">Ingrese un apellido valido.</div>
+              <div *ngIf="this.formueditar.get('direccion')?.hasError('maxlength');">Limite excedido.</div>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="ciudad" class="form-label">Ciudad</label>
+            <input type="mail" class="form-control" id="ciudad" name="ciudad" formControlName="ciudad">
+            <div  class="text-danger" *ngIf="formueditar.get('ciudad')?.invalid && formueditar.get('ciudad')?.touched">
+              
+              <div *ngIf="this.formueditar.get('ciudad')?.hasError('minlength');">Ingrese un correo valido.</div>
+              <div *ngIf="this.formueditar.get('ciudad')?.hasError('maxlength');">Limite excedido.</div>
+            </div>
+          </div>
+        
+      
+        </div>
+        <div class="col-md-6">
+        
+          <div class="mb-3">
+            <label for="telefono" class="form-label">No. Telefónico</label>
+            <input type="text" class="form-control" id="telefono" formControlName="telefono" >
+            <div  class="text-danger" *ngIf="formueditar.get('telefono')?.invalid && formueditar.get('telefono')?.touched">
+              
+              <div *ngIf="this.formueditar.get('telefono')?.hasError('minlength');">Ingrese un apellido valido.</div>
+              <div *ngIf="this.formueditar.get('telefono')?.hasError('maxlength');">Limite excedido.</div>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="genero" class="form-label">Género</label>
+              <select class="form-select" id="genero" formControlName="genero">
+                <option value="F">Femenino</option>
+                <option value="M">Masculino</option>
+              </select>
+              <div  class="text-danger" *ngIf="formueditar.get('genero')?.invalid && formueditar.get('genero')?.touched">
+                <div *ngIf="this.formueditar.get('genero')?.hasError('minlength');">Ingrese un valor valido.</div>
+                <div *ngIf="this.formueditar.get('genero')?.hasError('maxlength');">Limite excedido.</div>
+              </div>
+          </div>
+        
+      
+        </div>
+        
+      </div>
+
+      <div class="row">
+        <div class="col-md-2">
+          <main class="px-3">
+            <div class="mb-3">
+              <label for="fnacimiento" class="form-label">Fecha Nacimiento</label>
+              <input type="date" class="form-control" id="fnacimiento" formControlName="fnacimiento" >
+              <div  class="text-danger" *ngIf="formueditar.get('fnacimiento')?.invalid && formueditar.get('fnacimiento')?.touched">
+                <div *ngIf="this.formueditar.get('fnacimiento')?.hasError('required');">Fecha de nacimiento requerido.</div>
+                <div *ngIf="this.formueditar.get('fnacimiento')?.hasError('minlength');">Ingrese un valor valido.</div>
+                <div *ngIf="this.formueditar.get('fnacimiento')?.hasError('maxlength');">Limite excedido.</div>
+              </div>
+            </div>
+          </main>
+        </div>
+        <div class="col-md-2">
+          <main class="px-3">
+            <div class="mb-3">
+              <label for="escolaridad" class="form-label">Escolaridad</label>
+              <select class="form-select" id="escolaridad" formControlName="escolaridad">
+                <option value="1">Primaria</option>
+                <option value="2">Bachillerato</option>
+                <option value="3">Tecnico</option>
+                <option value="4">Tecnologo</option>
+                <option value="5">Profesional</option>
+                <option value="6">Especializacion</option>
+              </select>
+              <div  class="text-danger" *ngIf="formueditar.get('escolaridad')?.invalid && formueditar.get('escolaridad')?.touched">
+                <div *ngIf="this.formueditar.get('escolaridad')?.hasError('required');">Escolaridad es requerido.</div>
+                <div *ngIf="this.formueditar.get('escolaridad')?.hasError('minlength');">Ingrese un valor valido.</div>
+                <div *ngIf="this.formueditar.get('escolaridad')?.hasError('maxlength');">Limite excedido.</div>
+              </div>
+            </div>
+          </main>
+        </div>
+        <div class="col-md-2">
+          <main class="px-3">
+            <div class="mb-3">
+              <label for="lateralidad" class="form-label">Lateralidad</label>
+              <select class="form-select" id="lateralidad" formControlName="lateralidad">
+                <option value="1">Izquierda</option>
+                <option value="2">Derecha</option>
+              </select>
+              <div  class="text-danger" *ngIf="formueditar.get('lateralidad')?.invalid && formueditar.get('lateralidad')?.touched">
+                <div *ngIf="this.formueditar.get('lateralidad')?.hasError('required');">nombre es requerido.</div>
+                <div *ngIf="this.formueditar.get('lateralidad')?.hasError('minlength');">Ingrese un valor valido.</div>
+                <div *ngIf="this.formueditar.get('lateralidad')?.hasError('maxlength');">Limite excedido.</div>
+              </div>
+            </div>
+          </main>
+        </div>
+        <div class="col-md-2">
+          <main class="px-3">
+            <div class="mb-3">
+              <label for="accidentes" class="form-label">No. accidentes</label>
+              <input type="number" min="0" class="form-control" id="accidentes" formControlName="accidentes" >
+              <div  class="text-danger" *ngIf="formueditar.get('accidentes')?.invalid && formueditar.get('accidentes')?.touched">
+                <div *ngIf="this.formueditar.get('accidentes')?.hasError('required');">0 valor minimo.</div>
+                <div *ngIf="this.formueditar.get('accidentes')?.hasError('minlength');">Ingrese un valor valido.</div>
+                <div *ngIf="this.formueditar.get('accidentes')?.hasError('maxlength');">Valor no valido.</div>
+              </div>
+            </div>
+          </main>
+        </div>
+        <div class="col-md-2">
+          <main class="px-3">
+            <div class="mb-3">
+              <label for="gravedad" class="form-label">Gravedad</label>
+              <select class="form-select" id="gravedad" formControlName="gravedad">
+                <option value="0">N/A</option>
+                <option value="1">Solo daños</option>
+                <option value="2">Con lesionados</option>
+                <option value="3">Con fallecidos</option>
+              </select>
+              <div  class="text-danger" *ngIf="formueditar.get('gravedad')?.invalid && formueditar.get('gravedad')?.touched">
+                <div *ngIf="this.formueditar.get('gravedad')?.hasError('minlength');">Ingrese un valor valido.</div>
+                <div *ngIf="this.formueditar.get('gravedad')?.hasError('maxlength');">Limite excedido.</div>
+              </div>
+            </div>
+          </main>
+        </div>
+        <div class="col-md-2">
+          <main class="px-3">
+            <div class="mb-3">
+              <label for="edad" class="form-label">Edad</label>
+              <input type="mail" class="form-control" id="edad" name="edad" formControlName="edad">
+              <div  class="text-danger" *ngIf="formueditar.get('edad')?.invalid && formueditar.get('edad')?.touched">
+                
+                <div *ngIf="this.formueditar.get('edad')?.hasError('minlength');">Ingrese un correo valido.</div>
+                <div *ngIf="this.formueditar.get('edad')?.hasError('maxlength');">Limite excedido.</div>
+              </div>
+            </div>
+          </main>
+        </div>
+        
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <main class="px-3">
+            <div class="mb-3">
+              <label for="antecedentes" class="form-label">Antecedentes</label>
+              <textarea class="form-control" id="antecedentes" rows="4" formControlName="antecedentes"></textarea>
+              <div  class="text-danger" *ngIf="formueditar.get('antecedentes')?.invalid && formueditar.get('antecedentes')?.touched">
+                <div *ngIf="this.formueditar.get('antecedentes')?.hasError('maxlength');">Limite excedido.</div>
+              </div>
+            </div>
+          </main>
+        </div>
+        
+      </div>
+
+  </div>
+  <div class="modal-footer">
+    
+    <button type="button" ngbAutofocus class="btn btn-outline-info" (click)="activomodal3(modal3)">Ver Resultados</button>
+    <button type="button" ngbAutofocus class="btn btn-outline-warning" (click)="activomodal2(modal2)">Muestra Link</button>
+    <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('cancel click')">Cancel</button>
+    <button type="button" ngbAutofocus class="btn btn-primary" (click)="modal.close(guardar())">Ok</button>
+  </div>
+  </form>
+</ng-template>
+<!-- modal 2 genera link -->
+<ng-template #modal2 let-modal>
+	<div class="modal-header">
+		<h4 class="modal-title">Link Creado</h4>
+		<button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+	</div>
+	<div class="modal-body">
+		<code>{{codigofinal}}</code>
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-secondary" (click)="modal.close('Close click')">Close</button>
+	</div>
+</ng-template>
+<!-- modal 3 genera link -->
+<ng-template #modal3 let-modal>
+	<div class="modal-header">
+		<h4 class="modal-title">Resultados - {{unpaciente.nombre}} {{unpaciente.apellidos}}</h4>
+		<button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+	</div>
+	<div class="modal-body">
+		
+    
+    <div class="container">
+      <div class="row justify-content-start">
+        
+        <div class="col">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th scope="col"> - </th>
+                <th scope="col">Omisión %</th>
+                <th scope="col">Comisión %</th>
+                <th scope="col">Tiempo respuesta</th>
+                <th scope="col">Perseveración %</th>
+                <th scope="col">Fecha </th>
+                <th scope="col"> </th>
+              </tr>
+            </thead>
+            <tbody *ngFor="let resultado of resultados; let i = index;">
+              <tr [class.table-success]="resultado.estado == 0">
+              <th scope="col"><font style="vertical-align: inherit;">Prueba {{i+1}}</font></th>
+              <td> {{resultado.omision}} --- {{resultado.porceomision}} % </td>
+              <td> {{resultado.comision}} --- {{resultado.porcecomision}} % </td>
+              <td> {{resultado.tiemporespuesta}} mst</td>
+              <td> {{resultado.perseveracion}} --- {{resultado.porceperseveracion}} % </td>
+              <td> {{resultado.fecha}} </td>
+              <td><button type="button" class="btn btn-outline-warning btn-sm" (click)="activomodal5(modal5,resultado.ctpid)"><i class="uil uil-file-check" style="font-size: 20px;"></i> Ver Informe</button></td>
+              </tr>
+            </tbody>
+          </table>
+          
+        </div>
+      
+      </div>
+    </div>
+
+
+	</div>
+	<div class="modal-footer">
+    <button type="button" ngbAutofocus class="btn btn-outline-info" (click)="activomodal4(modal4)">Crear Informe</button>
+		<button type="button" class="btn btn-secondary" (click)="modal.close('Close click')">Close</button>
+	</div>
+</ng-template>
+
+<!-- modal 4 genera link -->
+<ng-template #modal4 let-modal>
+	<div class="modal-header">
+		<h4 class="modal-title">Generar Informe</h4>
+		<button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+	</div>
+	<div class="modal-body">
+		<p>
+			Perfil Neurocongnitivo
+		</p>
+    <form [formGroup]="forgafica1">
+    <div class="row">
+      
+      <div class="col-md-6">
+
+        <div class="row">
+          <div class="col-md-3">
+            
+              <div class="mb-3">
+                <label for="atsostenida" class="form-label">At. Sostenida</label>
+                <input type="number" min="0" class="form-control" id="atsostenida" formControlName="atsostenida" (input)="actualizarGraficoOnChange()" >
+                <div  class="text-danger" *ngIf="formueditar.get('atsostenida')?.invalid && formueditar.get('atsostenida')?.touched">
+                  <div *ngIf="this.formueditar.get('atsostenida')?.hasError('required');">0 valor minimo.</div>
+                  <div *ngIf="this.formueditar.get('atsostenida')?.hasError('minlength');">Ingrese un valor valido.</div>
+                  <div *ngIf="this.formueditar.get('atsostenida')?.hasError('maxlength');">Valor no valido.</div>
+                </div>
+              </div>
+
+          </div>
+          <div class="col-md-3">
+
+              <div class="mb-3">
+                <label for="atalternante" class="form-label">At. Alternante</label>
+                <input type="number" min="0" class="form-control" id="atalternante" formControlName="atalternante" (input)="actualizarGraficoOnChange()" >
+                <div  class="text-danger" *ngIf="formueditar.get('atalternante')?.invalid && formueditar.get('atalternante')?.touched">
+                  <div *ngIf="this.formueditar.get('atalternante')?.hasError('required');">0 valor minimo.</div>
+                  <div *ngIf="this.formueditar.get('atalternante')?.hasError('minlength');">Ingrese un valor valido.</div>
+                  <div *ngIf="this.formueditar.get('atalternante')?.hasError('maxlength');">Valor no valido.</div>
+                </div>
+              </div>
+      
+          </div>
+          <div class="col-md-3">
+            
+            <div class="mb-3">
+              <label for="trespuesta" class="form-label">T. Respuesta</label>
+              <input type="number" min="0" class="form-control" id="trespuesta" formControlName="trespuesta" (input)="actualizarGraficoOnChange()" >
+                <div  class="text-danger" *ngIf="formueditar.get('trespuesta')?.invalid && formueditar.get('trespuesta')?.touched">
+                  <div *ngIf="this.formueditar.get('trespuesta')?.hasError('required');">0 valor minimo.</div>
+                  <div *ngIf="this.formueditar.get('trespuesta')?.hasError('minlength');">Ingrese un valor valido.</div>
+                  <div *ngIf="this.formueditar.get('trespuesta')?.hasError('maxlength');">Valor no valido.</div>
+                </div>
+            </div>
+
+          </div>
+          <div class="col-md-3">
+
+              <div class="mb-3">
+                <label for="ctrinhibitorio" class="form-label">Ctr. Inhibitorio</label>
+                <input type="number" min="0" class="form-control" id="ctrinhibitorio" formControlName="ctrinhibitorio" (input)="actualizarGraficoOnChange()">
+                <div  class="text-danger" *ngIf="formueditar.get('ctrinhibitorio')?.invalid && formueditar.get('ctrinhibitorio')?.touched">
+                  <div *ngIf="this.formueditar.get('ctrinhibitorio')?.hasError('required');">0 valor minimo.</div>
+                  <div *ngIf="this.formueditar.get('ctrinhibitorio')?.hasError('minlength');">Ingrese un valor valido.</div>
+                  <div *ngIf="this.formueditar.get('ctrinhibitorio')?.hasError('maxlength');">Valor no valido.</div>
+                </div>
+              </div>
+      
+          </div>
+        </div>
+
+        <p>
+          Media..
+        </p>
+
+        <div class="row">
+          <div class="col-md-3">
+            
+              <div class="mb-3">
+                <label for="atsostenida2" class="form-label">At. Sostenida</label>
+                <input type="number" min="0" class="form-control" id="atsostenida2" formControlName="atsostenida2" (input)="actualizarGraficoOnChange()">
+                <div  class="text-danger" *ngIf="formueditar.get('atsostenida2')?.invalid && formueditar.get('atsostenida2')?.touched">
+                  <div *ngIf="this.formueditar.get('atsostenida2')?.hasError('required');">0 valor minimo.</div>
+                  <div *ngIf="this.formueditar.get('atsostenida2')?.hasError('minlength');">Ingrese un valor valido.</div>
+                  <div *ngIf="this.formueditar.get('atsostenida2')?.hasError('maxlength');">Valor no valido.</div>
+                </div>
+              </div>
+
+          </div>
+          <div class="col-md-3">
+
+              <div class="mb-3">
+                <label for="atalternante2" class="form-label">At. Alternante</label>
+                <input type="number" min="0" class="form-control" id="atalternante2" formControlName="atalternante2" (input)="actualizarGraficoOnChange()">
+                <div  class="text-danger" *ngIf="formueditar.get('atalternante2')?.invalid && formueditar.get('atalternante2')?.touched">
+                  <div *ngIf="this.formueditar.get('atalternante2')?.hasError('required');">0 valor minimo.</div>
+                  <div *ngIf="this.formueditar.get('atalternante2')?.hasError('minlength');">Ingrese un valor valido.</div>
+                  <div *ngIf="this.formueditar.get('atalternante2')?.hasError('maxlength');">Valor no valido.</div>
+                </div>
+              </div>
+      
+          </div>
+          <div class="col-md-3">
+            
+            <div class="mb-3">
+              <label for="trespuesta2" class="form-label">T. Respuesta</label>
+              <input type="number" min="0" class="form-control" id="trespuesta2" formControlName="trespuesta2" (input)="actualizarGraficoOnChange()">
+                <div  class="text-danger" *ngIf="formueditar.get('trespuesta2')?.invalid && formueditar.get('trespuesta2')?.touched">
+                  <div *ngIf="this.formueditar.get('trespuesta2')?.hasError('required');">0 valor minimo.</div>
+                  <div *ngIf="this.formueditar.get('trespuesta2')?.hasError('minlength');">Ingrese un valor valido.</div>
+                  <div *ngIf="this.formueditar.get('trespuesta2')?.hasError('maxlength');">Valor no valido.</div>
+                </div>
+            </div>
+
+          </div>
+          <div class="col-md-3">
+
+              <div class="mb-3">
+                <label for="ctrinhibitorio2" class="form-label">Ctr. Inhibitorio</label>
+                <input type="number" min="0" class="form-control" id="ctrinhibitorio2" formControlName="ctrinhibitorio2" (input)="actualizarGraficoOnChange()">
+                <div  class="text-danger" *ngIf="formueditar.get('ctrinhibitorio2')?.invalid && formueditar.get('ctrinhibitorio2')?.touched">
+                  <div *ngIf="this.formueditar.get('ctrinhibitorio2')?.hasError('required');">0 valor minimo.</div>
+                  <div *ngIf="this.formueditar.get('ctrinhibitorio2')?.hasError('minlength');">Ingrese un valor valido.</div>
+                  <div *ngIf="this.formueditar.get('ctrinhibitorio2')?.hasError('maxlength');">Valor no valido.</div>
+                </div>
+              </div>
+      
+          </div>
+        </div>
+
+      </div>
+
+      <div class="col-md-6">
+        <div style="margin-top: -120px;">
+          <div id="grafiRadar" >
+              <p-chart id="grafico1" type="radar" [data]="data" [options]="options"></p-chart>
+          </div>
+      </div>
+      </div>
+    </div>  
+    </form>
+
+    <hr>
+    <form [formGroup]="forgafica2">
+    <div class="row">
+      
+      <!-- Grafico Dona 1  -->
+      <div class="col-md-3">
+
+        <h5>Atención sostenida</h5>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="mb-6">
+              <label for="Valor1" class="form-label">Valor1</label>
+              <input type="number" min="0" class="form-control" id="Valor1" formControlName="Valor1" (input)="actualizarGrafico1()">
+              <div  class="text-danger" *ngIf="formueditar.get('Valor1')?.invalid && formueditar.get('Valor1')?.touched">
+                <div *ngIf="this.formueditar.get('Valor1')?.hasError('required');">0 valor minimo.</div>
+                <div *ngIf="this.formueditar.get('Valor1')?.hasError('minlength');">Ingrese un valor valido.</div>
+                <div *ngIf="this.formueditar.get('Valor1')?.hasError('maxlength');">Valor no valido.</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label for="Valor2" class="form-label">Valor2</label>
+              <input type="number" min="0" class="form-control" id="Valor2" formControlName="Valor2" (input)="actualizarGrafico1()">
+              <div  class="text-danger" *ngIf="formueditar.get('Valor2')?.invalid && formueditar.get('Valor2')?.touched">
+                <div *ngIf="this.formueditar.get('Valor2')?.hasError('required');">0 valor minimo.</div>
+                <div *ngIf="this.formueditar.get('Valor2')?.hasError('minlength');">Ingrese un valor valido.</div>
+                <div *ngIf="this.formueditar.get('Valor2')?.hasError('maxlength');">Valor no valido.</div>
+              </div>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-md-12">
+            <div id="grafiDona1" class="card flex justify-content-center">
+              <p-chart id="grafico1" type="doughnut" [data]="data1" [options]="options1"></p-chart>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Grafico Dona 2  -->
+      <div class="col-md-3">
+
+        <h5>Agudeza visual</h5>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="mb-6">
+              <label for="Valor3" class="form-label">Valor3</label>
+              <input type="number" min="0" class="form-control" id="Valor3" formControlName="Valor3" (input)="actualizarGrafico2()">
+              <div  class="text-danger" *ngIf="formueditar.get('Valor3')?.invalid && formueditar.get('Valor3')?.touched">
+                <div *ngIf="this.formueditar.get('Valor3')?.hasError('required');">0 valor minimo.</div>
+                <div *ngIf="this.formueditar.get('Valor3')?.hasError('minlength');">Ingrese un valor valido.</div>
+                <div *ngIf="this.formueditar.get('Valor3')?.hasError('maxlength');">Valor no valido.</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label for="Valor4" class="form-label">Valor4</label>
+              <input type="number" min="0" class="form-control" id="Valor4" formControlName="Valor4" (input)="actualizarGrafico2()">
+              <div  class="text-danger" *ngIf="formueditar.get('Valor4')?.invalid && formueditar.get('Valor4')?.touched">
+                <div *ngIf="this.formueditar.get('Valor4')?.hasError('required');">0 valor minimo.</div>
+                <div *ngIf="this.formueditar.get('Valor4')?.hasError('minlength');">Ingrese un valor valido.</div>
+                <div *ngIf="this.formueditar.get('Valor4')?.hasError('maxlength');">Valor no valido.</div>
+              </div>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-md-12">
+            <div id="grafiDona2" class="card flex justify-content-center">
+              <p-chart id="grafico2" type="doughnut" [data]="data2" [options]="options2"></p-chart>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Grafico Dona 3  -->
+      <div class="col-md-3">
+
+        <h5>Vel. procesamiento</h5>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="mb-6">
+              <label for="Valor5" class="form-label">Valor5</label>
+              <input type="number" min="0" class="form-control" id="Valor5" formControlName="Valor5" (input)="actualizarGrafico3()">
+              <div  class="text-danger" *ngIf="formueditar.get('Valor5')?.invalid && formueditar.get('Valor5')?.touched">
+                <div *ngIf="this.formueditar.get('Valor5')?.hasError('required');">0 valor minimo.</div>
+                <div *ngIf="this.formueditar.get('Valor5')?.hasError('minlength');">Ingrese un valor valido.</div>
+                <div *ngIf="this.formueditar.get('Valor5')?.hasError('maxlength');">Valor no valido.</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label for="Valor6" class="form-label">Valor6</label>
+              <input type="number" min="0" class="form-control" id="Valor6" formControlName="Valor6" (input)="actualizarGrafico3()">
+              <div  class="text-danger" *ngIf="formueditar.get('Valor6')?.invalid && formueditar.get('Valor6')?.touched">
+                <div *ngIf="this.formueditar.get('Valor6')?.hasError('required');">0 valor minimo.</div>
+                <div *ngIf="this.formueditar.get('Valor6')?.hasError('minlength');">Ingrese un valor valido.</div>
+                <div *ngIf="this.formueditar.get('Valor6')?.hasError('maxlength');">Valor no valido.</div>
+              </div>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-md-12">
+            <div id="grafiDona3" class="card flex justify-content-center">
+              <p-chart id="grafico3" type="doughnut" [data]="data3" [options]="options3"></p-chart>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Grafico Dona 4  -->
+      <div class="col-md-3">
+
+        <h5>Control inhibitorio</h5>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="mb-6">
+              <label for="Valor7" class="form-label">Valor7</label>
+              <input type="number" min="0" class="form-control" id="Valor7" formControlName="Valor7" (input)="actualizarGrafico4()">
+              <div  class="text-danger" *ngIf="formueditar.get('Valor7')?.invalid && formueditar.get('Valor7')?.touched">
+                <div *ngIf="this.formueditar.get('Valor7')?.hasError('required');">0 valor minimo.</div>
+                <div *ngIf="this.formueditar.get('Valor7')?.hasError('minlength');">Ingrese un valor valido.</div>
+                <div *ngIf="this.formueditar.get('Valor7')?.hasError('maxlength');">Valor no valido.</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label for="Valor8" class="form-label">Valor8</label>
+              <input type="number" min="0" class="form-control" id="Valor8" formControlName="Valor8" (input)="actualizarGrafico4()">
+              <div  class="text-danger" *ngIf="formueditar.get('Valor8')?.invalid && formueditar.get('Valor8')?.touched">
+                <div *ngIf="this.formueditar.get('Valor8')?.hasError('required');">0 valor minimo.</div>
+                <div *ngIf="this.formueditar.get('Valor8')?.hasError('minlength');">Ingrese un valor valido.</div>
+                <div *ngIf="this.formueditar.get('Valor8')?.hasError('maxlength');">Valor no valido.</div>
+              </div>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-md-12">
+            <div id="grafiDona4" class="card flex justify-content-center">
+              <p-chart id="grafico4" type="doughnut" [data]="data4" [options]="options4"></p-chart>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      
+    </div>
+    </form>
+
+    <hr>
+    
+    <h5>Conclusiones</h5>
+    <form [formGroup]="forgafica3">
+    <div class="row">
+      <div class="col-md-12">
+        <main class="px-3">
+          <div class="mb-3">
+            <label for="conclusiones" class="form-label">Recomendaciones del profesional</label>
+            <textarea class="form-control" id="conclusiones" rows="6" formControlName="conclusiones"></textarea>
+            <div  class="text-danger" *ngIf="formueditar.get('conclusiones')?.invalid && formueditar.get('conclusiones')?.touched">
+              <div *ngIf="this.formueditar.get('conclusiones')?.hasError('maxlength');">Limite excedido.</div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+    </form>
+
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-secondary" (click)="modal.close('Close click')">Close</button>
+    <button type="button" ngbAutofocus class="btn btn-primary" (click)="modal.close(imprimir())">Descargar</button>
+	</div>
+</ng-template>
+
+<!-- modal 5 genera link -->
+<ng-template #modal5 let-modal>
+	<div class="modal-header">
+		<h4 class="modal-title">Link Creado</h4>
+		<button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+	</div>
+	<div class="modal-body" *ngIf="tomodatosdescarga">
+
+    <div class="row">
+      <div class="col-md-2"></div>
+      <div class="col-md-8">
+        <table class="table table-hover">
+          <thead>
+            <tr >
+              <th colspan="4" style="text-align: center; background-color: rgb(255, 217, 102);"> EVALUACIÓN COGNITIVA ATENCIONAL </th>
+            </tr>
+            <tr>
+              <th colspan="4" style="text-align: center; background-color: rgb(217, 217, 217);"> CONDUCTORES VEHÍCULOS LINEA BLANCA </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td> Nombre y apellidos : </td>
+              <td colspan="3"> {{tomodatosdescarga.nombrecompleto}}</td>
+            </tr>
+            <tr>
+              <td> Identifiación :  </td>
+              <td> {{tomodatosdescarga.identificacion}} </td>
+              <td> Edad :  </td>
+              <td> {{tomodatosdescarga.edad}} años </td>
+            </tr>
+            <tr>
+              <td> Escolaridad :  </td>
+              <td> {{tomodatosdescarga.escolaridad}} </td>
+              <td> Lateralidad :  </td>
+              <td> {{tomodatosdescarga.lateralidad}} </td>
+            </tr>
+            <tr>
+              <td> Gravedad :  </td>
+              <td> {{tomodatosdescarga.gravedad}} </td>
+              <td> Accidentes reportados :  </td>
+              <td> {{tomodatosdescarga.accidentesreportados}} </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col-md-2"></div>
+    </div>
+
+
+		<p>A continuación, se describe el perfil general del rendimiento en la evaluación cognitiva, el
+      cual contempla procesos atencionales y funciones ejecutivas, el ítem de atención
+      sostenida evidencia una ponderación de los aciertos logrados en la ejecución de la prueba
+      “CPT”. El ítem de Velocidad de procesamiento, el cual se establece a partir del tiempo de
+      respuesta que se otorga posterior a la aparición del estímulo, y el ítem Control inhibitorio,
+      el cual contempla la capacidad de inhibir o bloquear conductas inapropiadas o distractores.</p>
+
+      <h3 style="text-align: center;">Perfil Neurocognitivo</h3>
+
+      <div class="row">
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+          <div id="grafiRadar" >
+            <p-chart id="graficoR2" type="radar" [data]="dataR2" [options]="optionsR2"></p-chart>
+          </div>
+        </div>
+        <div class="col-md-3"></div>
+      </div>
+
+      <h1>Perfil Cognitivo</h1>
+
+      <p>En este apartado se discrimina por cada habilidad cognitiva evaluada junto con el puntaje
+        correspondiente alcanzado, en una escala de 0-100. Que le permite compararlo frente a un
+        grupo de referencia. Los valores calculados se obtienen a partir de una puntuación global
+        de la prueba y se reajustan a la escala 0-100. A mayor puntuación obtenida, mayor
+        rendimiento.</p>
+
+      <p>La conducción representa un compromiso cognitivo significativo, por el alto nivel de
+        información que se procesa y su flujo constante. A continuación, se describen los procesos
+        cognitivos críticos y claves en el ejercicio de la conducción.</p>
+
+      <h3>PROCESO ATENCIONAL Y PERCEPTUAL</h3>
+
+      <p>Los procesos atencionales juegan un papel fundamental en la conducción, debido al alto
+        flujo de información que se requiere procesar. La atención es el primer proceso cognitivo,
+        que le permite al conductor, estar en comunicación con su entorno. Este proceso se
+        subdivide en los diferentes tipos de atención.</p>
+
+      <div class="row">
+        <div class="col-md-3">
+          <div id="grafiDona5" class="card flex justify-content-center">
+            <p-chart id="grafico5" type="doughnut" [data]="data5" [options]="options5"></p-chart>
+          </div>
+        </div>
+        <div class="col-md-9">
+          <h2>Atención sostenida</h2>
+          <p>Hace referencia a la capacidad de atender a un mismo estimulo
+            durante un largo periodo de tiempo. El conductor JUAN DE LA
+            CRUZ MEDINA obtuvo una puntuación «RANGO_OM» en esta
+            habilidad, lo que se relaciona con una «CALIF_OM» capacidad
+            para enfocarse en la información relevante mientras se omiten
+            los elementos distractores.</p>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3">
+          <div id="grafiDona5" class="card flex justify-content-center">
+            <p-chart id="grafico6" type="doughnut" [data]="data6" [options]="options6"></p-chart>
+          </div>
+        </div>
+        <div class="col-md-9">
+          <h2>Agudeza visual</h2>
+          <p>Hace referencia a la capacidad de atender a un mismo estimulo
+            durante un largo periodo de tiempo. El conductor JUAN DE LA
+            CRUZ MEDINA obtuvo una puntuación «RANGO_OM» en esta
+            habilidad, lo que se relaciona con una «CALIF_OM» capacidad
+            para enfocarse en la información relevante mientras se omiten
+            los elementos distractores.</p>
+        </div>
+      </div>
+      <br>
+      <h3>FUNCIONES EJECUTIVAS</h3>
+
+      <p>Las funciones ejecutivas obedecen a aquellas funciones psicológicas superiores, son las
+        encargadas de monitorear y regular los demás procesos cognitivos. Gracias a estos
+        procesos un conductor puede ajustar su conducta de acuerdo con las exigencias del
+        entorno, es decir, regular su velocidad, abstenerse de realizar maniobras peligrosas y
+        establecer estrategias efectivas para la solución de problemas en la vía.
+        </p>
+        <br>
+      <div class="row">
+        <div class="col-md-3">
+          <div id="grafiDona5" class="card flex justify-content-center">
+            <p-chart id="grafico7" type="doughnut" [data]="data7" [options]="options7"></p-chart>
+          </div>
+        </div>
+        <div class="col-md-9">
+          <h2>Velocidad de procesamiento</h2>
+          <p>Hace referencia a la capacidad para percibir estímulos visuales
+            de manera oportuna y detectar aquellos que se consideran
+            relevantes de los irrelevantes. El conductor JUAN DE LA CRUZ 
+            MEDINA obtuvo una puntuación «RANGO_AG» en esta
+            habilidad. Lo que se relaciona con una «CALIF_AG» capacidad
+            de identificar de manera oportuna obstáculos o elementos de
+            riesgo en la vía.</p>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3">
+          <div id="grafiDona8" class="card flex justify-content-center">
+            <p-chart id="grafico8" type="doughnut" [data]="data8" [options]="options8"></p-chart>
+          </div>
+        </div>
+        <div class="col-md-9">
+          <h2>Control inhibitorio</h2>
+          <p>Se refiere a la capacidad para responder de manera oportuna
+            frente a las situaciones, utilizando una conducta apropiada, de
+            acuerdo con el contexto y eliminando aquella respuesta
+            automática que no se ajusta a los requerimientos del entorno. El
+            conductor JUAN DE LA CRUZ MEDINA, obtuvo una puntuación
+            «RANGO_COM» en esta habilidad. Lo que se relaciona con una
+            «CALIF_COM» capacidad para orientar su respuesta frente a
+            cualquier estimulo en la vía.</p>
+        </div>
+      </div>
+
+      <h1>Conclusiones</h1>
+
+      <p>Según los datos recogidos, el conductor JUAN DE LA CRUZ MEDINA obtuvo una
+        puntuación general de «CPT_TOTAL», lo que lo ubica en el rango «RANGO_FINAL», esto
+        indica que se ajusta a los requerimientos del cargo, teniendo en cuenta su desempeño en
+        los perfiles neurocognitivos y neuropsicológicos.
+        </p>
+
+      <p>texto del profesional</p>
+      <<-apto->>
+      <br>
+        fima.<br>
+      ______________________________________<br>
+      {{tomodatosdescarga.nombreprofe}}<br>
+      {{tomodatosdescarga.estudioprofe}}<br>
+      ES&VA SOLUCIONES INTEGRALES S.A.S.
+
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-secondary" (click)="modal.close('Close click')">Close</button>
+    <button type="button" ngbAutofocus class="btn btn-primary" (click)="modal.close(guardar())">Descargar</button>
+	</div>
+</ng-template>
+  
+
+
+
+  
+ 

@@ -1,0 +1,5 @@
+.container {
+    display: flex; /* Usa un modelo de caja flexible para el diseño */
+    justify-content: center; /* Centra el contenido horizontalmente */
+    align-items: center; /* Centra el contenido verticalmente */
+  }
