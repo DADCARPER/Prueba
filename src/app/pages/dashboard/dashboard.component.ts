@@ -402,7 +402,7 @@ colDefs: ColDef[] =  [
           this.tomodatosdescarga = resultadosFiltrados2[0];
           //console.log(this.tomodatosdescarga.nombrecompleto);
           //// se llama generar informe el cual se pasan parametros this.tomadatosdescarga el que contiene los parametros de base datos tabla -> resultadostotal 
-          this.graficaR2(); // LLamo grafica dona R2
+          this.graficaR2(this.tomodatosdescarga.atsostenida,this.tomodatosdescarga.atsostenida2,this.tomodatosdescarga.atalternante,this.tomodatosdescarga.atalternante2,this.tomodatosdescarga.tiemporespuesta,this.tomodatosdescarga.tiemporespuesta2,this.tomodatosdescarga.controlinhibitorio,this.tomodatosdescarga.controlinhibitorio2); // LLamo grafica dona R2
           this.grafica5(this.tomodatosdescarga.valor1,this.tomodatosdescarga.valor2); // LLamo grafica dona 5
           this.grafica6(this.tomodatosdescarga.valor3,this.tomodatosdescarga.valor4); // LLamo grafica dona 6
           this.grafica7(this.tomodatosdescarga.valor5,this.tomodatosdescarga.valor6); // LLamo grafica dona 7
@@ -764,7 +764,7 @@ colDefs: ColDef[] =  [
   }
   //////////////////////////////// FIN DONAS 1- 4 //////////////////////////////////////////////
 
-  graficaR2(){
+  graficaR2(valor1:any,valor2:any,valor3:any,valor4:any,valor5:any,valor6:any,valor7:any,valor8:any){
     const documentStyle = getComputedStyle(document.documentElement);
         const textColor = documentStyle.getPropertyValue('--text-color');
         const textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
@@ -783,7 +783,7 @@ colDefs: ColDef[] =  [
                     pointBorderColor: '#fff',
                     pointHoverBackgroundColor: '#fff',
                     pointHoverBorderColor: 'rgba(179,181,198,1)',
-                    data: [this.forgafica1 ? this.forgafica1.get('atsostenida2').value : 0, this.forgafica1 ? this.forgafica1.get('atalternante2').value : 0, this.forgafica1 ? this.forgafica1.get('trespuesta2').value : 0, this.forgafica1 ? this.forgafica1.get('ctrinhibitorio2').value : 0]
+                    data: [valor5 != "" ? valor5 : 0, valor6 != "" ? valor6 : 0, valor7 != "" ? valor7 : 0, valor8 != "" ? valor8 : 0]
                 },
                 {
                     label: 'David Carvajal Pernett',
@@ -795,7 +795,7 @@ colDefs: ColDef[] =  [
                     pointBorderWidth: 2, // Grosor del borde de los puntos
                     pointHoverBackgroundColor: '#fff',
                     pointHoverBorderColor: 'rgba(179,181,198,1)',
-                    data: [this.forgafica1 ? this.forgafica1.get('atsostenida').value : 0, this.forgafica1 ? this.forgafica1.get('atalternante').value : 0, this.forgafica1 ? this.forgafica1.get('trespuesta').value : 0, this.forgafica1 ? this.forgafica1.get('ctrinhibitorio').value : 0]
+                    data: [valor1 != "" ? valor1 : 0, valor2 != "" ? valor2 : 0, valor3 != "" ? valor3 : 0, valor4 != "" ? valor4 : 0]
                 }
             ]
         };

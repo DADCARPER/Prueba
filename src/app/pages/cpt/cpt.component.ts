@@ -128,7 +128,7 @@ export class CptComponent {
       }
     });
     
-    
+    this.mostrarBoton =true;
 
   }
 
@@ -214,11 +214,12 @@ export class CptComponent {
       
       clearInterval(timerId); 
       this.pasar++;
-      console.log(this.pasar);
+      //console.log(this.pasar);
       //this.muestratodos();
       //this.mostrardivletras=false;// esta linea se borra
       setTimeout(() => {
         this.todaslasfases(this.pasar) // esta liene da paso a los otros bloques
+        //this.todaslasfases(7); // esata linea se habilita solo para que se muestre 1 solo bloque y pase al final
       }, 1200); // 4000 milisegundos = 4 segundos
     }, tiempobloque); // pausa el proceso repetitivo de la variable timerId*/
       
@@ -230,9 +231,6 @@ export class CptComponent {
 
     //Da clic = 1;
     this.daclic = 1;
-    //hago el sonido
-    const audioPlayer: HTMLAudioElement = this.audioPlayerRef.nativeElement;
-    audioPlayer.play();
      
     //Dio clic tomo el tiempo
     let tiempoActual = Date.now();
@@ -285,6 +283,10 @@ export class CptComponent {
 
     //Da clic reseteo;
     this.daclic = 0;
+
+    //hago el sonido
+    const audioPlayer: HTMLAudioElement = this.audioPlayerRef.nativeElement;
+    audioPlayer.play();
   }
 
   /// DAR CLIC PARA INICIAR LETRAS
@@ -368,6 +370,7 @@ export class CptComponent {
      
     this.tiraletras = this.letrasTiempoService.registroletras;
     //console.log(this.tiraletras);
+    //console.log(this.letrasTiempoService.registroclics);
     let totalX = this.contarLetraX(this.letrasTiempoService.registroletras);
     //console.log(totalX);
     //Calculo la omision que es el total de letras mostradas menos el total de veces que dio clic en X
@@ -379,7 +382,7 @@ export class CptComponent {
     //console.log('total letras salieron'+totalletrasmostradas);
     let totalletrasrestadaX = totalletrasmostradas - totalX;
     //console.log('total letras restando las X'+ totalletrasrestadaX);
-    let [sidioclic, nodioclic] = this.contarlopresionado(this.letrasTiempoService.registroletras);
+    let [sidioclic, nodioclic, noclicenX, siclicenX] = this.contarlopresionado(this.letrasTiempoService.registroletras);
     //this.verComision = "De un total de = "+totalletrasrestadaX+" Letras correctas. Se oprimio ="+(sidioclic-this.letraXdioClic);
     //console.log('si dio clic?'+sidioclic);
     //console.log('NO dio clic?'+nodioclic);
@@ -390,12 +393,12 @@ export class CptComponent {
     this.verOmisionPorcen = 0;
     }else{
     this.verOmision = nodioclic;
-    this.verOmisionPorcen = ( this.verOmision / totalletrasrestadaX) * 100;
+    this.verOmisionPorcen = ( this.verOmision / totalletrasmostradas) * 100;
     }
 
     // genero la Comisión
-    this.verComision = sidioclic-this.letraXdioClic;
-
+    //this.verComision = sidioclic-this.letraXdioClic;
+    this.verComision = siclicenX;
     this.verComisionporcen = ( this.verComision / totalletrasrestadaX) * 100;
    
 
@@ -406,7 +409,7 @@ export class CptComponent {
 
     // cuento los clic repetidos
     let totalclicrepetido = this.contarlosclicrepetidos(this.letrasTiempoService.registroclics);
-    this.verperseveracion = totalclicrepetido + this.letraXdioClic;
+    this.verperseveracion = totalclicrepetido;
     this.verperseveracionporcen = ( this.verperseveracion / totalletrasrestadaX) * 100;
 
     /// AQUI LLAMO GUARDAR TABLA
@@ -423,9 +426,9 @@ export class CptComponent {
       token: "c890eaf03d0b47cc7b64df1647630c16"
 
     }
-    this.ctpResultadosService.agreagarresultados(form).subscribe(data =>{
-      console.log(data);
-    })
+    // this.ctpResultadosService.agreagarresultados(form).subscribe(data =>{
+    //   console.log(data);
+    // })
   }
 
   // Función para contar las ocurrencias de la letra 'A'
@@ -439,17 +442,25 @@ export class CptComponent {
     return contador;
   }
 
-  contarlopresionado(datos: { tiempoEnPresionar: number }[]){
+  contarlopresionado(datos: { caracter: string, tiempoEnPresionar: number }[]){
     let sidioclic = 0; // si dio clic
+    let noclicenX = 0; // SE CUENTA SI SALIO X Y NO SE DIO CLIC .
+    let siclicenX = 0; // SE CUENTA SI SALIO X Y NO SE DIO CLIC .
     let nodioclic = 0; // no dio clic
     for (const dato of datos) {
-      if (dato.tiempoEnPresionar === 1) {
+
+      if (dato.tiempoEnPresionar === 1 && dato.caracter === "X") {
+        siclicenX++;
+      }else if (dato.tiempoEnPresionar === 1){
         sidioclic++;
+      }else if(dato.tiempoEnPresionar === 0 && dato.caracter === "X" ){
+        noclicenX++;
       }else{
         nodioclic++;
       }
+
     }
-    return [sidioclic, nodioclic];
+    return [sidioclic, nodioclic, noclicenX, siclicenX];
   }
 
   sumarMilipresionado(datos: { tiempoEnPresionar: number }[]){

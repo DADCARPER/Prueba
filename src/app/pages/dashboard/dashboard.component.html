@@ -323,7 +323,11 @@
               <td> {{resultado.tiemporespuesta}} mst</td>
               <td> {{resultado.perseveracion}} --- {{resultado.porceperseveracion}} % </td>
               <td> {{resultado.fecha}} </td>
-              <td><button type="button" class="btn btn-outline-warning btn-sm" (click)="activomodal5(modal5,resultado.ctpid)"><i class="uil uil-file-check" style="font-size: 20px;"></i> Ver Informe</button></td>
+              <td *ngIf="resultado.estado != 0">
+                <button type="button" class="btn btn-outline-warning btn-sm" (click)="activomodal5(modal5,resultado.ctpid)">
+                    <i class="uil uil-file-check" style="font-size: 20px;"></i> Ver Informe
+                </button>
+              </td>
               </tr>
             </tbody>
           </table>
@@ -761,8 +765,7 @@
         <div class="col-md-9">
           <h2>Atención sostenida</h2>
           <p>Hace referencia a la capacidad de atender a un mismo estimulo
-            durante un largo periodo de tiempo. El conductor JUAN DE LA
-            CRUZ MEDINA obtuvo una puntuación «RANGO_OM» en esta
+            durante un largo periodo de tiempo. El conductor <b>{{tomodatosdescarga.nombrecompleto}}</b> obtuvo una puntuación «RANGO_OM» en esta
             habilidad, lo que se relaciona con una «CALIF_OM» capacidad
             para enfocarse en la información relevante mientras se omiten
             los elementos distractores.</p>
@@ -778,8 +781,7 @@
         <div class="col-md-9">
           <h2>Agudeza visual</h2>
           <p>Hace referencia a la capacidad de atender a un mismo estimulo
-            durante un largo periodo de tiempo. El conductor JUAN DE LA
-            CRUZ MEDINA obtuvo una puntuación «RANGO_OM» en esta
+            durante un largo periodo de tiempo. El conductor <b>{{tomodatosdescarga.nombrecompleto}}</b> obtuvo una puntuación «RANGO_OM» en esta
             habilidad, lo que se relaciona con una «CALIF_OM» capacidad
             para enfocarse en la información relevante mientras se omiten
             los elementos distractores.</p>
@@ -805,8 +807,7 @@
           <h2>Velocidad de procesamiento</h2>
           <p>Hace referencia a la capacidad para percibir estímulos visuales
             de manera oportuna y detectar aquellos que se consideran
-            relevantes de los irrelevantes. El conductor JUAN DE LA CRUZ 
-            MEDINA obtuvo una puntuación «RANGO_AG» en esta
+            relevantes de los irrelevantes. El conductor <b>{{tomodatosdescarga.nombrecompleto}}</b> obtuvo una puntuación «RANGO_AG» en esta
             habilidad. Lo que se relaciona con una «CALIF_AG» capacidad
             de identificar de manera oportuna obstáculos o elementos de
             riesgo en la vía.</p>
@@ -825,7 +826,7 @@
             frente a las situaciones, utilizando una conducta apropiada, de
             acuerdo con el contexto y eliminando aquella respuesta
             automática que no se ajusta a los requerimientos del entorno. El
-            conductor JUAN DE LA CRUZ MEDINA, obtuvo una puntuación
+            conductor <b>{{tomodatosdescarga.nombrecompleto}}</b>, obtuvo una puntuación
             «RANGO_COM» en esta habilidad. Lo que se relaciona con una
             «CALIF_COM» capacidad para orientar su respuesta frente a
             cualquier estimulo en la vía.</p>
@@ -834,17 +835,23 @@
 
       <h1>Conclusiones</h1>
 
-      <p>Según los datos recogidos, el conductor JUAN DE LA CRUZ MEDINA obtuvo una
+      <p>Según los datos recogidos, el conductor <b>{{tomodatosdescarga.nombrecompleto}}</b> obtuvo una
         puntuación general de «CPT_TOTAL», lo que lo ubica en el rango «RANGO_FINAL», esto
         indica que se ajusta a los requerimientos del cargo, teniendo en cuenta su desempeño en
         los perfiles neurocognitivos y neuropsicológicos.
         </p>
 
-      <p>texto del profesional</p>
-      <<-apto->>
+      <p>{{tomodatosdescarga.conclusiones}}</p>
+      <div style="text-align: center;">
+        <img src="./assets/apto.png" width="130"  class="me-2" class="img-fluid" alt="...">
+      </div>
+
       <br>
-        fima.<br>
-      ______________________________________<br>
+      <br>
+      
+      <img [src]="'./assets/'+tomodatosdescarga.urlfirma" width="220"  class="me-2" class="img-fluid" alt="...">
+      
+      <p>______________________________________</p>
       {{tomodatosdescarga.nombreprofe}}<br>
       {{tomodatosdescarga.estudioprofe}}<br>
       ES&VA SOLUCIONES INTEGRALES S.A.S.

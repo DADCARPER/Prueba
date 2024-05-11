@@ -15,6 +15,10 @@ export interface resultadostotalI {
   atalternante: string;
   tiemporespuesta: string;
   controlinhibitorio: string;
+  atsostenida2: string | number;
+  atalternante2: string;
+  tiemporespuesta2: string;
+  controlinhibitorio2: string;
   rango1: string;
   rango2: string;
   rango3: string;
