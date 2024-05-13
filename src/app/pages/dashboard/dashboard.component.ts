@@ -199,6 +199,7 @@ colDefs: ColDef[] =  [
     this.formueditar.patchValue({ "token" : token });
     //this.graficaRadar1();
     //this.consultoresultadostotal();
+    this.cptTotal(2,5,545.2,22);
   
   }
 
@@ -1253,6 +1254,60 @@ colDefs: ColDef[] =  [
       v1 = 0;
     }
 
+    if (comi >= 0 && comi <= 3) {
+      v2 = 25;
+    } else if (comi >= 4 && comi <= 6) {
+      let valor10 = [24, 23];
+        let indiceAleatorio = Math.floor(Math.random() * valor10.length);
+        v2 = valor10[indiceAleatorio];
+    } else if (comi >= 7 && comi <= 10) {
+      v2 = 22;
+    } else if (comi >= 11 && comi <= 13) {
+      v2 = 21;
+    } else if (comi == 14) {
+      v2 = 20;
+    } else if (comi == 15) {
+      v2 = 19;
+    } else if (comi == 16) {
+      v2 = 18;
+    } else if (comi >= 17 && comi <= 21) {
+      v2 = 17;
+    } else if (comi >= 22 && comi <= 27) {
+      v2 = 16;
+    } else if (comi >= 28 && comi <= 32) {
+      v2 = 15;
+    } else if (comi == 33) {
+      v2 = 14;
+    } else if (comi == 34) {
+      v2 = 13;
+    } else if (comi == 35) {
+      v2 = 12;
+    } else if (comi >= 36 && comi <= 40) {
+      v2 = 11;
+    } else if (comi >= 41 && comi <= 45) {
+      v2 = 10;
+    } else if (comi >= 46 && comi <= 49) {
+      v2 = 9;
+    } else if (comi == 50) {
+      v2 = 8;
+    } else if (comi == 51) {
+      v2 = 7;
+    } else if (comi == 52) {
+      let valor11 = [6, 5];
+        let indiceAleatorio = Math.floor(Math.random() * valor11.length);
+        v2 = valor11[indiceAleatorio];
+    } else if (comi >= 53 && comi <= 55) {
+      v2 = 4;
+    } else if (comi >= 56 && comi <= 59) {
+      let valor12 = [3, 2];
+        let indiceAleatorio = Math.floor(Math.random() * valor12.length);
+        v2 = valor12[indiceAleatorio];
+    } else if (comi == 60) {
+      v2 = 1;
+    } else{
+      v2 = 0;
+    }
+
     if (tr <= 350) {
       v3 = 25;
     } else if (tr <= 370){
@@ -1349,9 +1404,31 @@ colDefs: ColDef[] =  [
     v4 = 0;
   }
 
-  let baremototal = [v1,comi,v3,v4];
+  let baremototal = [v1,v2,v3,v4];
     return baremototal;
 
+  }
+
+  cptTotal(omisiones:number,perseveraciones:number,tr:number,comision:number){
+    let omE:number = (omisiones * 100) / 32;
+    let omEAproximado =parseFloat( omE.toFixed(0) );
+    let omision = 100 - omEAproximado;
+
+    let agV:number = (perseveraciones * 100) / 18;
+    let agVAproximado =parseFloat( agV.toFixed(0) );
+    let agudeza = 100 - agVAproximado;
+
+    let trE:number = (tr * 100) / 1216;
+    let trEAproximado =parseFloat( trE.toFixed(0) );
+    let trTotal = 100 - trEAproximado;
+
+    let coM:number = (comision * 100) / 38;
+    let coMproximado =parseFloat( coM.toFixed(0) );
+    let contInh = 100 - coMproximado;
+
+    let cTpTotal = (omision+agudeza+trTotal+contInh)/4
+    cTpTotal = parseFloat( cTpTotal.toFixed(0) );
+    console.log(cTpTotal);
   }
 
   generaInforme(pdfFile: string){

@@ -141,24 +141,46 @@ export class CptComponent {
     let obtengonumero = Math.floor(Math.random() * 89); // numero aleatorio
     let generoCaracter = this.bloque1[obtengonumero];
     //console.log(typeof generoCaracter);
-    //console.log("Letra ANTERIOR "+this.caracterAnterior+" CCaracter "+generoCaracter);
+    console.log(generoCaracter+" <- entro PRIMER random -> "+this.caracterAnterior);
 
     if ( obtengonumero === this.tiempoInicioAnterior || this.caracterAnterior === generoCaracter ){
       obtengonumero = Math.floor(Math.random() * 89); // numero aleatorio
       generoCaracter = this.bloque1[obtengonumero];
-      //console.log("entro SEGUNDO random");
+      console.log(generoCaracter+" <- entro SEGUNDO random -> "+this.caracterAnterior);
 
         if(obtengonumero === this.tiempoInicioAnterior || this.caracterAnterior === generoCaracter){
           obtengonumero = Math.floor(Math.random() * 89); // numero aleatorio
           generoCaracter = this.bloque1[obtengonumero];
-          //console.log("entro TERCER random");
+          console.log(generoCaracter+" <- entro TERCER random -> "+this.caracterAnterior);
 
             if(obtengonumero === this.tiempoInicioAnterior || this.caracterAnterior === generoCaracter){
               obtengonumero = Math.floor(Math.random() * 89); // numero aleatorio
               generoCaracter = this.bloque1[obtengonumero];
-              //console.log("entro CUARTO random");
+              console.log(generoCaracter+" <- entro CUARTO random -> "+this.caracterAnterior);
+
+                if(obtengonumero === this.tiempoInicioAnterior || this.caracterAnterior === generoCaracter){
+                  obtengonumero = Math.floor(Math.random() * 89); // numero aleatorio
+                  generoCaracter = this.bloque1[obtengonumero];
+                  console.log(generoCaracter+" <- entro QUINTO random -> "+this.caracterAnterior);
+
+                    if(obtengonumero === this.tiempoInicioAnterior || this.caracterAnterior === generoCaracter){
+                      obtengonumero = Math.floor(Math.random() * 89); // numero aleatorio
+                      generoCaracter = this.bloque1[obtengonumero];
+                      console.log(generoCaracter+" <- entro SEXTO random -> "+this.caracterAnterior);
+
+                        if(obtengonumero === this.tiempoInicioAnterior || this.caracterAnterior === generoCaracter){
+                          obtengonumero = Math.floor(Math.random() * 89); // numero aleatorio
+                          generoCaracter = this.bloque1[obtengonumero];
+                          console.log(generoCaracter+" <- entro SECTIMO random -> "+this.caracterAnterior);
+                        }
+                    }
+                }
             }
         }
+      
+      this.tiempoInicioAnterior = obtengonumero;
+      this.caracterAnterior = generoCaracter;
+
     }else{
       this.tiempoInicioAnterior = obtengonumero;
       this.caracterAnterior = generoCaracter;
@@ -173,6 +195,7 @@ export class CptComponent {
     
     this.mostrardivletras = true;
     this.idprimera++;
+    this.tiempoinicio = this.gnNumAle();
     //console.log(this.idprimera);
     this.milisegAclic = Date.now();
     // Mostrar la primera letra
@@ -208,8 +231,6 @@ export class CptComponent {
     }, tiempo); //se muestan las demas cada 2.5 segun
     
 
-    
-
     setTimeout(() => { 
       
       clearInterval(timerId); 
@@ -220,7 +241,7 @@ export class CptComponent {
       setTimeout(() => {
         this.todaslasfases(this.pasar) // esta liene da paso a los otros bloques
         //this.todaslasfases(7); // esata linea se habilita solo para que se muestre 1 solo bloque y pase al final
-      }, 1200); // 4000 milisegundos = 4 segundos
+      }, tiempo); // 4000 milisegundos = 4 segundos
     }, tiempobloque); // pausa el proceso repetitivo de la variable timerId*/
       
     
@@ -426,9 +447,10 @@ export class CptComponent {
       token: "c890eaf03d0b47cc7b64df1647630c16"
 
     }
-    // this.ctpResultadosService.agreagarresultados(form).subscribe(data =>{
-    //   console.log(data);
-    // })
+    
+    this.ctpResultadosService.agreagarresultados(form).subscribe(data =>{
+      console.log(data);
+    })
   }
 
   // Función para contar las ocurrencias de la letra 'A'
