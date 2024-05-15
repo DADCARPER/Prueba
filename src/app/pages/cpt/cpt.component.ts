@@ -106,7 +106,7 @@ export class CptComponent {
             //console.log(data);
             this.idpaciente= data;
             if (this.idpaciente != ""){
-              console.log(this.idpaciente[0].pacienteid);
+              //console.log(this.idpaciente[0].pacienteid);
               this.mostrarBoton =true;
             }else{
               console.error('No se encontro paciente registrado.');
@@ -128,7 +128,7 @@ export class CptComponent {
       }
     });
     
-    this.mostrarBoton =true;
+    //this.mostrarBoton =true;
 
   }
 

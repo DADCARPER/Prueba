@@ -15,6 +15,7 @@ import { jsPDF } from 'jspdf';
 import  autoTable  from 'jspdf-autotable';
 import html2canvas from 'html2canvas';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { TooltipItem  } from 'chart.js';
 
 
 
@@ -54,48 +55,56 @@ export class DashboardComponent {
   options1: any;
   capturedona1: any;
   imgData1:any;
+  numcentro1:any = "";
 
   //grafica dona 2
   data2: any;
   options2: any;
   capturedona2: any;
   imgData2:any;
+  numcentro2:any = "";
 
   //grafica dona 3
   data3: any;
   options3: any;
   capturedona3: any;
   imgData3:any;
+  numcentro3:any = "";
 
   //grafica dona 4
   data4: any;
   options4: any;
   capturedona4: any;
   imgData4:any;
+  numcentro4:any = "";
 
   //grafica dona 5
   data5: any;
   options5: any;
   capturedona5: any;
   imgData5:any;
+  numcentro5:any = "";
 
   //grafica dona 6
   data6: any;
   options6: any;
   capturedona6: any;
   imgData6:any;
+  numcentro6:any = "";
 
   //grafica dona 7
   data7: any;
   options7: any;
   capturedona7: any;
   imgData7:any;
+  numcentro7:any = "";
 
   //grafica dona 8
   data8: any;
   options8: any;
   capturedona8: any;
   imgData8:any;
+  numcentro8:any = "";
 
   //resultados del ultimo resultado cargado estado = 0
   ultimoElemento:any;
@@ -199,7 +208,7 @@ colDefs: ColDef[] =  [
     this.formueditar.patchValue({ "token" : token });
     //this.graficaRadar1();
     //this.consultoresultadostotal();
-    this.cptTotal(2,5,545.2,22);
+    //this.cptTotal(5,22,545.2,5);
   
   }
 
@@ -282,7 +291,7 @@ colDefs: ColDef[] =  [
           // Tomar el último elemento del array filtrado
           this.ultimoElemento = resultadosFiltrados[resultadosFiltrados.length - 1];
           console.log(this.baremoMINER(this.ultimoElemento.omision,this.ultimoElemento.comision,this.ultimoElemento.tiemporespuesta,this.ultimoElemento.perseveracion));
-          console.log(this.ultimoElemento.tiemporespuesta ); // Muestra el último elemento en la consola
+          //console.log(this.ultimoElemento.tiemporespuesta ); // Muestra el último elemento en la consola
         }
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -294,8 +303,10 @@ colDefs: ColDef[] =  [
   activomodal4(content:any){
 
     const modalRef: NgbModalRef = this.modalService.open(content,{ size: 'xl', centered: true, scrollable: true });
-    this.totalResultadoBaremo = this.baremoMINER(this.ultimoElemento.omision,this.ultimoElemento.comision,this.ultimoElemento.tiemporespuesta,this.ultimoElemento.perseveracion)
-    console.log(this.totalResultadoBaremo[0]);
+    this.totalResultadoBaremo = this.cptTotal(this.ultimoElemento.omision,this.ultimoElemento.comision,this.ultimoElemento.tiemporespuesta,this.ultimoElemento.perseveracion)
+    //console.log(this.totalResultadoBaremo[0]);
+
+
     this.graficaRadar1(); // Llamo grafica Radar
   
     this.grafica1(); // LLamo grafica dona 1
@@ -304,15 +315,29 @@ colDefs: ColDef[] =  [
     this.grafica4(); // LLamo grafica dona 4
     this.forgafica1.patchValue({
       'atsostenida': this.totalResultadoBaremo[0],
-      'atalternante': this.totalResultadoBaremo[1],
+      'atalternante': this.totalResultadoBaremo[3],
       'trespuesta': this.totalResultadoBaremo[2],
-      'ctrinhibitorio': this.totalResultadoBaremo[3],
+      'ctrinhibitorio': this.totalResultadoBaremo[1],
       'atsostenida2': 50,
       'atalternante2': 40,
       'trespuesta2': 66,
       'ctrinhibitorio2': 33,
     });
+    this.forgafica2.patchValue({
+      'Valor1': this.totalResultadoBaremo[0],
+      'Valor2': 100 - this.totalResultadoBaremo[0],
+      'Valor3': this.totalResultadoBaremo[3],
+      'Valor4': 100 - this.totalResultadoBaremo[3],
+      'Valor5': this.totalResultadoBaremo[2],
+      'Valor6': 100 - this.totalResultadoBaremo[2],
+      'Valor7': this.totalResultadoBaremo[1],
+      'Valor8': 100 - this.totalResultadoBaremo[1],
+    });
     this.actualizarGraficoOnChange();
+    this.actualizarGrafico1();
+    this.actualizarGrafico2();
+    this.actualizarGrafico3();
+    this.actualizarGrafico4();
     //console.log(this.forgafica3.get('conclusiones').value); // tomo el valor de caja textarea
 
     
@@ -402,6 +427,7 @@ colDefs: ColDef[] =  [
           console.log(resultadosFiltrados2);
           this.tomodatosdescarga = resultadosFiltrados2[0];
           //console.log(this.tomodatosdescarga.nombrecompleto);
+
           //// se llama generar informe el cual se pasan parametros this.tomadatosdescarga el que contiene los parametros de base datos tabla -> resultadostotal 
           this.graficaR2(this.tomodatosdescarga.atsostenida,this.tomodatosdescarga.atsostenida2,this.tomodatosdescarga.atalternante,this.tomodatosdescarga.atalternante2,this.tomodatosdescarga.tiemporespuesta,this.tomodatosdescarga.tiemporespuesta2,this.tomodatosdescarga.controlinhibitorio,this.tomodatosdescarga.controlinhibitorio2); // LLamo grafica dona R2
           this.grafica5(this.tomodatosdescarga.valor1,this.tomodatosdescarga.valor2); // LLamo grafica dona 5
@@ -544,18 +570,19 @@ colDefs: ColDef[] =  [
 
 
       this.options1 = {
-          cutout: '60%',
-          plugins: {
-              legend: {
-                  labels: {
-                      color: textColor
-                  }
-              }
+        cutout: '60%', // Ajusta este valor según tus necesidades
+        plugins: {
+          legend: {
+            labels: {
+              color: textColor,
+            },
           }
+        },
       };
   }
 
   actualizarGrafico1(){
+    this.numcentro1 = this.forgafica2.get('Valor1').value;
     this.grafica1();
   }
 
@@ -588,6 +615,7 @@ colDefs: ColDef[] =  [
   }
 
   actualizarGrafico2(){
+    this.numcentro2 = this.forgafica2.get('Valor3').value;
     this.grafica2();
   }
 
@@ -620,6 +648,7 @@ colDefs: ColDef[] =  [
   }
 
   actualizarGrafico3(){
+    this.numcentro3 = this.forgafica2.get('Valor5').value;
     this.grafica3();
   }
 
@@ -652,6 +681,7 @@ colDefs: ColDef[] =  [
   }
 
   actualizarGrafico4(){
+    this.numcentro4 = this.forgafica2.get('Valor7').value;
     this.grafica4();
   }
 
@@ -917,7 +947,8 @@ colDefs: ColDef[] =  [
       ["Nombre y apellidos :", { content: this.unpaciente.nombre+" "+this.unpaciente.apellidos, colSpan: 3 }],
       ["Identifiación :", this.unpaciente.dni, "Edad :", this.unpaciente.edad+" años"],
       ["Escolaridad :", this.escolaridad(this.unpaciente.escolaridad), "Lateralidad :",this.lateralidad(this.unpaciente.lateralidad)],
-      ["Gravedad :", this.gravedad(this.unpaciente.gravedad), "Accidentes reportados :", this.unpaciente.numaccidentes]
+      ["Gravedad :", this.gravedad(this.unpaciente.gravedad), "Accidentes reportados :", this.unpaciente.numaccidentes],
+      ["Antecedentes :", { content: this.unpaciente.antecedentes, colSpan: 3 }]
     ];
 
     // Opciones para la tabla
@@ -958,7 +989,7 @@ colDefs: ColDef[] =  [
       body: data.slice(0), // Cuerpo de la tabla
       // Opciones de la tabla
       margin: { top: 20, left: 114, right: 114, bottom: 20 }, // Margen superior
-      startY: 180, // Posicion en la hoja
+      startY: 160, // Posicion en la hoja
       bodyStyles: {
         lineWidth: 1, // Ancho de borde para el cuerpo de la tabla
       },
@@ -1026,7 +1057,7 @@ colDefs: ColDef[] =  [
       doc.text("Atención sostenida",260,610);
 
       doc.setFontSize(12);
-      const textoLargo5 = `Hace referencia a la capacidad de atender a un mismo estimulo durante un largo periodo de tiempo. El conductor `+nombreCompletoMayuscula+` obtuvo una puntuación «RANGO_OM» en esta habilidad, lo que se relaciona con una «CALIF_OM» capacidad para enfocarse   en la información relevante mientras se omiten los   elementos distractores.`;
+      const textoLargo5 = `Hace referencia a la capacidad de atender a un mismo estimulo durante un largo periodo de tiempo. El conductor `+nombreCompletoMayuscula+` obtuvo una puntuación `+this.rangoTotal(this.totalResultadoBaremo[0])+` en esta habilidad, lo que se relaciona con una `+this.califiacionTotal(this.totalResultadoBaremo[0])+` capacidad para enfocarse   en la información relevante mientras se omiten los   elementos distractores.`;
       doc.text(textoLargo5,260,650,{ align: 'justify', maxWidth: 465 } );
 
       doc.addImage('../../assets/informe3.png', 'png', (doc.internal.pageSize.width - 200) / 2, 750, 200, 200,"celular");
@@ -1045,7 +1076,7 @@ colDefs: ColDef[] =  [
       doc.text("Agudeza visual",260,200);
 
       doc.setFontSize(12);
-      const textoLargo6 = `Hace referencia a la capacidad para percibir estímulos visuales de manera oportuna y detectar aquellos que se consideran relevantes de los irrelevantes. El conductor `+nombreCompletoMayuscula+` obtuvo una puntuación «RANGO_AG» en esta habilidad. Lo que se relaciona con una «CALIF_AG» capacidad de identificar de manera oportuna obstáculos o elementos de riesgo en la vía.`;
+      const textoLargo6 = `Hace referencia a la capacidad para percibir estímulos visuales de manera oportuna y detectar aquellos que se consideran relevantes de los irrelevantes. El conductor `+nombreCompletoMayuscula+` obtuvo una puntuación `+this.rangoTotal(this.totalResultadoBaremo[3])+` en esta habilidad. Lo que se relaciona con una `+this.califiacionTotal(this.totalResultadoBaremo[3])+` capacidad de identificar de manera oportuna obstáculos o elementos de riesgo en la vía.`;
       doc.text(textoLargo6,260,250,{ align: 'justify', maxWidth: 465 } );
 
       doc.setFontSize(16);
@@ -1061,7 +1092,7 @@ colDefs: ColDef[] =  [
       doc.text("Velocidad de procesamiento",260,555);
 
       doc.setFontSize(12);
-      const textoLargo8 = `Hace referencia a la capacidad para percibir estímulos visuales de manera oportuna y detectar aquellos que se consideran relevantes de los irrelevantes. El conductor `+nombreCompletoMayuscula+` obtuvo una puntuación «RANGO_AG» en esta habilidad. Lo que se relaciona con una «CALIF_AG» capacidad de identificar de manera oportuna obstáculos o elementos de riesgo en la vía.`;
+      const textoLargo8 = `Hace referencia a la capacidad para percibir estímulos visuales de manera oportuna y detectar aquellos que se consideran relevantes de los irrelevantes. El conductor `+nombreCompletoMayuscula+` obtuvo una puntuación `+this.rangoTotal(this.totalResultadoBaremo[2])+` en esta habilidad. Lo que se relaciona con una `+this.califiacionTotal(this.totalResultadoBaremo[2])+` capacidad de identificar de manera oportuna obstáculos o elementos de riesgo en la vía.`;
       doc.text(textoLargo8,260,595,{ align: 'justify', maxWidth: 465 } );
 
       doc.addImage(this.imgData4, 'PNG', 80, 750, 150, 150, "graficadona4");
@@ -1070,7 +1101,7 @@ colDefs: ColDef[] =  [
       doc.text("Control inhibitorio",260,755);
 
       doc.setFontSize(12);
-      const textoLargo9 = `Se refiere a la capacidad para responder de manera oportuna frente a las situaciones, utilizando una conducta apropiada, de acuerdo con el contexto y eliminando aquella respuesta automática que no se ajusta a los requerimientos del entorno. El conductor `+nombreCompletoMayuscula+`, obtuvo una puntuación «RANGO_COM» en esta habilidad. Lo que se relaciona con una «CALIF_COM» capacidad para orientar su respuesta frente a cualquier estimulo en la vía`;
+      const textoLargo9 = `Se refiere a la capacidad para responder de manera oportuna frente a las situaciones, utilizando una conducta apropiada, de acuerdo con el contexto y eliminando aquella respuesta automática que no se ajusta a los requerimientos del entorno. El conductor `+nombreCompletoMayuscula+`, obtuvo una puntuación `+this.rangoTotal(this.totalResultadoBaremo[1])+` en esta habilidad. Lo que se relaciona con una `+this.califiacionTotal(this.totalResultadoBaremo[1])+` capacidad para orientar su respuesta frente a cualquier estimulo en la vía`;
       doc.text(textoLargo9,260,795,{ align: 'justify', maxWidth: 465 } );
 
       doc.addPage();////PAGINA 4
@@ -1084,7 +1115,7 @@ colDefs: ColDef[] =  [
       doc.text("Conclusiones",80,200);
 
       doc.setFontSize(12);
-      const textoLargo10 = `Según los datos recogidos, el conductor `+nombreCompletoMayuscula+` obtuvo una puntuación general de «CPT_TOTAL», lo que lo ubica en el rango «RANGO_FINAL», esto indica que se ajusta a los requerimientos del cargo, teniendo en cuenta su desempeño en los perfiles neurocognitivos y neuropsicológicos.`;
+      const textoLargo10 = `Según los datos recogidos, el conductor `+nombreCompletoMayuscula+` obtuvo una puntuación general de `+this.totalResultadoBaremo[4]+`, lo que lo ubica en el rango `+this.rangoTotal(this.totalResultadoBaremo[4])+`, esto indica que se ajusta a los requerimientos del cargo, teniendo en cuenta su desempeño en los perfiles neurocognitivos y neuropsicológicos.`;
       doc.text(textoLargo10,80,260,{ align: 'justify', maxWidth: 645 } );
 
       doc.setFontSize(12);
@@ -1106,27 +1137,10 @@ colDefs: ColDef[] =  [
       doc.setFont("helvetica", "normal", "bold");
       doc.text("PSI. Daniela Fernanda Quevedo Barrios",80,900);
       doc.setFont("helvetica", "normal");
-      doc.text("Maestrante en Neuropsicología",80,920);
+      doc.text("Magister en Neuropsicología",80,920);
       doc.text("ES&VA SOLUCIONES INTEGRALES S.A.S.",80,940);
 
-      //doc.save('david.pdf');
-
-
-      // Convierte el PDF en una cadena de datos (Data URI)
-      const pdfString = doc.output('datauristring');
-
-      // Realiza una solicitud HTTP POST para enviar el PDF al servidor PHP
-      this.http.post<any>('http://localhost/ververver/resultadostotal', { pdfData: pdfString }).subscribe({
-        next: response => {
-          console.log('PDF guardado en el servidor');
-        },
-        error: error => {
-          console.error('Error al guardar PDF en el servidor:', error);
-        }
-      });
-
-      // Envía el PDF al servidor
-      //this.generaInforme('david.pdf');
+      doc.save('david.pdf');
 
     }, 3000);
   
@@ -1404,31 +1418,72 @@ colDefs: ColDef[] =  [
     v4 = 0;
   }
 
-  let baremototal = [v1,v2,v3,v4];
-    return baremototal;
+
+    return [v1,v2,v3,tr,v4];
 
   }
 
-  cptTotal(omisiones:number,perseveraciones:number,tr:number,comision:number){
+  cptTotal(omisiones:number,comision:number,tr:number,perseveraciones:number){
+    let total:number [];
+    let rango: [];
+    let clasifica: [];
     let omE:number = (omisiones * 100) / 32;
     let omEAproximado =parseFloat( omE.toFixed(0) );
     let omision = 100 - omEAproximado;
-
-    let agV:number = (perseveraciones * 100) / 18;
-    let agVAproximado =parseFloat( agV.toFixed(0) );
-    let agudeza = 100 - agVAproximado;
-
-    let trE:number = (tr * 100) / 1216;
-    let trEAproximado =parseFloat( trE.toFixed(0) );
-    let trTotal = 100 - trEAproximado;
 
     let coM:number = (comision * 100) / 38;
     let coMproximado =parseFloat( coM.toFixed(0) );
     let contInh = 100 - coMproximado;
 
+    let trE:number = (tr * 100) / 1216;
+    let trEAproximado =parseFloat( trE.toFixed(0) );
+    let trTotal = 100 - trEAproximado;
+
+    let agV:number = (perseveraciones * 100) / 18;
+    let agVAproximado =parseFloat( agV.toFixed(0) );
+    let agudeza = 100 - agVAproximado;
+
+
     let cTpTotal = (omision+agudeza+trTotal+contInh)/4
-    cTpTotal = parseFloat( cTpTotal.toFixed(0) );
-    console.log(cTpTotal);
+    let cTpTotal2 = parseFloat( cTpTotal.toFixed(0) );
+    console.log(omision);
+    console.log(contInh);
+    console.log(trTotal);
+    console.log(agudeza);
+
+    console.log(cTpTotal2);
+    //this.rangoTotal(cTpTotal);
+
+    return total = [omision,contInh,trTotal,agudeza,cTpTotal2];
+
+  }
+
+  rangoTotal(valor:number){
+    let estado:string;
+    if(valor < 26){
+      estado = "MUY BAJA";
+    } else if (valor < 51){
+      estado = "BAJA";
+    }else if (valor < 76){
+      estado = "MEDIA";
+    }else{
+      estado = "ALTA";
+    }
+    //console.log(estado);
+    return estado;
+  }
+
+  califiacionTotal(valor:number){
+    let estado:string;
+    if(valor < 25){
+      estado = "ESCASA";
+    } else if (valor < 75){
+      estado = "ADECUADA";
+    }else{
+      estado = "BUENA";
+    }
+    //console.log(estado);
+    return estado;
   }
 
   generaInforme(pdfFile: string){
