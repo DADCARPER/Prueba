@@ -7,7 +7,7 @@ import { FormBuilder, NgModel, Validators, FormControl } from '@angular/forms';
 import { AgGridAngular } from 'ag-grid-angular'; // AG Grid Component
 import { ColDef } from 'ag-grid-community'; // Column Definition Type Interface
 import { CtpResultadosService } from '../../ctp-resultados.service';
-import { ResultadosService } from '../../resultados.service';
+import { ResultadosService, resultadostotalI } from '../../resultados.service';
 import { Router } from '@angular/router';
 import { PdfService } from '../../pdf.service';
 import { UIChart } from 'primeng/chart';
@@ -15,7 +15,7 @@ import { jsPDF } from 'jspdf';
 import  autoTable  from 'jspdf-autotable';
 import html2canvas from 'html2canvas';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { TooltipItem  } from 'chart.js';
+
 
 
 
@@ -29,6 +29,10 @@ import { TooltipItem  } from 'chart.js';
 export class DashboardComponent {
 
   fechaActual: Date = new Date();
+
+  btncreainforme:any;
+  cerrarmoda3:any;
+  cerrarmoda4:any;
 
   pacientes:any;
   unpaciente:any;
@@ -112,6 +116,9 @@ export class DashboardComponent {
   guardoresultadostotal:any;
   tomodatosdescarga:any;
 
+  //loading
+  isLoading = false;
+
   @ViewChild('dialog') dialog!: ElementRef<HTMLDialogElement>;
 
 
@@ -161,7 +168,7 @@ colDefs: ColDef[] =  [
     gravedad: ['',[Validators.maxLength(1),Validators.minLength(1)]],
     correoelectronico: ['',[Validators.required,Validators.email,Validators.maxLength(35),Validators.minLength(8)]],
     token: ['',[Validators.required,Validators.maxLength(25),Validators.minLength(3)]],
-    direccion: ['',[Validators.required,Validators.maxLength(30),Validators.minLength(2)]],
+    direccion: ['',[Validators.required,Validators.maxLength(80),Validators.minLength(2)]],
     ciudad: ['',[Validators.required,Validators.maxLength(30),Validators.minLength(3)]],
     telefono: ['',[Validators.required,Validators.maxLength(15),Validators.minLength(5)]],
     genero: ['',[Validators.required,Validators.maxLength(2),Validators.minLength(1)]],
@@ -266,7 +273,9 @@ colDefs: ColDef[] =  [
   }
 
   activomodal3(content:any){
-    this.modalService.open(content,{ size: 'xl', centered: true });
+    const modalRef: NgbModalRef = this.modalService.open(content,{ size: 'xl', centered: true });
+    this.cerrarmoda3 = modalRef;
+    this.btncreainforme = true;
     this.ctpresultados.verresultado(this.id).subscribe(data1=>{
       //console.log(this.id);
       this.resultados= data1;
@@ -290,9 +299,11 @@ colDefs: ColDef[] =  [
         if (resultadosFiltrados.length > 0) {
           // Tomar el último elemento del array filtrado
           this.ultimoElemento = resultadosFiltrados[resultadosFiltrados.length - 1];
-          console.log(this.baremoMINER(this.ultimoElemento.omision,this.ultimoElemento.comision,this.ultimoElemento.tiemporespuesta,this.ultimoElemento.perseveracion));
-          //console.log(this.ultimoElemento.tiemporespuesta ); // Muestra el último elemento en la consola
+          //console.log(this.baremoMINER(this.ultimoElemento.omision,this.ultimoElemento.comision,this.ultimoElemento.tiemporespuesta,this.ultimoElemento.perseveracion));
+          //console.log(this.btncreainforme ); // Muestra el último elemento en la consola
+          this.btncreainforme = false;
         }
+        //console.log(this.btncreainforme ); // Muestra el último elemento en la consola
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     })
@@ -305,10 +316,9 @@ colDefs: ColDef[] =  [
     const modalRef: NgbModalRef = this.modalService.open(content,{ size: 'xl', centered: true, scrollable: true });
     this.totalResultadoBaremo = this.cptTotal(this.ultimoElemento.omision,this.ultimoElemento.comision,this.ultimoElemento.tiemporespuesta,this.ultimoElemento.perseveracion)
     //console.log(this.totalResultadoBaremo[0]);
-
+    this.cerrarmoda4 = modalRef;
 
     this.graficaRadar1(); // Llamo grafica Radar
-  
     this.grafica1(); // LLamo grafica dona 1
     this.grafica2(); // LLamo grafica dona 2
     this.grafica3(); // LLamo grafica dona 3
@@ -338,6 +348,7 @@ colDefs: ColDef[] =  [
     this.actualizarGrafico2();
     this.actualizarGrafico3();
     this.actualizarGrafico4();
+    
     //console.log(this.forgafica3.get('conclusiones').value); // tomo el valor de caja textarea
 
     
@@ -348,6 +359,7 @@ colDefs: ColDef[] =  [
     const modalRef: NgbModalRef = this.modalService.open(content,{ size: 'xl', centered: true, scrollable: true });
 
     this.consultoresultadostotal(id);
+ 
   
   }
 
@@ -415,7 +427,7 @@ colDefs: ColDef[] =  [
 
   consultoresultadostotal(event:any){
 
-    console.log('El valor de ctpid es:', event);
+    //console.log('El valor de ctpid es:', event);
 
     this.resultadostotal.verresultado().subscribe(data3=>{
       //console.log(data3);
@@ -424,19 +436,19 @@ colDefs: ColDef[] =  [
       const resultadosFiltrados2:any[] = this.guardoresultadostotal.filter((resultado2:any) => resultado2.id_ctp_resultados === event);
         // Verificar si hay resultados después de filtrar
         if (resultadosFiltrados2.length > 0) {
-          console.log(resultadosFiltrados2);
+          //console.log(resultadosFiltrados2);
           this.tomodatosdescarga = resultadosFiltrados2[0];
           //console.log(this.tomodatosdescarga.nombrecompleto);
 
           //// se llama generar informe el cual se pasan parametros this.tomadatosdescarga el que contiene los parametros de base datos tabla -> resultadostotal 
-          this.graficaR2(this.tomodatosdescarga.atsostenida,this.tomodatosdescarga.atsostenida2,this.tomodatosdescarga.atalternante,this.tomodatosdescarga.atalternante2,this.tomodatosdescarga.tiemporespuesta,this.tomodatosdescarga.tiemporespuesta2,this.tomodatosdescarga.controlinhibitorio,this.tomodatosdescarga.controlinhibitorio2); // LLamo grafica dona R2
+          this.graficaR2(this.tomodatosdescarga.atsostenida,this.tomodatosdescarga.atalternante,this.tomodatosdescarga.tiemporespuesta,this.tomodatosdescarga.controlinhibitorio,this.tomodatosdescarga.atsostenida2,this.tomodatosdescarga.atalternante2,this.tomodatosdescarga.tiemporespuesta2,this.tomodatosdescarga.controlinhibitorio2); // LLamo grafica dona R2
           this.grafica5(this.tomodatosdescarga.valor1,this.tomodatosdescarga.valor2); // LLamo grafica dona 5
           this.grafica6(this.tomodatosdescarga.valor3,this.tomodatosdescarga.valor4); // LLamo grafica dona 6
           this.grafica7(this.tomodatosdescarga.valor5,this.tomodatosdescarga.valor6); // LLamo grafica dona 7
           this.grafica8(this.tomodatosdescarga.valor7,this.tomodatosdescarga.valor8); // LLamo grafica dona 8
 
         }else{
-          console.log("no se encontro nada");
+          //console.log("no se encontro nada");
           this.tomodatosdescarga = {};
         }
     })
@@ -463,7 +475,7 @@ colDefs: ColDef[] =  [
         //window.print(); // Llama al modo de impresión al inicializar el componente
 
         this.data = {
-            labels: ['Atención sostenida', 'Atención alternante', 'Tiempo de respuesta', 'Control Inhibitorio'],
+            labels: ['Atención sostenida', 'Agudeza visual', 'Tiempo de respuesta', 'Control Inhibitorio'],
             datasets: [
                 
                 {
@@ -803,7 +815,7 @@ colDefs: ColDef[] =  [
         //window.print(); // Llama al modo de impresión al inicializar el componente
 
         this.dataR2 = {
-            labels: ['Atención sostenida', 'Atención alternante', 'Tiempo de respuesta', 'Control Inhibitorio'],
+            labels: ['Atención sostenida', 'Agudeza visual', 'Tiempo de respuesta', 'Control Inhibitorio'],
             datasets: [
                 
                 {
@@ -885,8 +897,9 @@ colDefs: ColDef[] =  [
         
   }
  
-  imprimir(){
+  async imprimir(){
     
+    this.isLoading=true;
     const doc = new jsPDF({
       orientation: 'portrait',
       unit: 'px',
@@ -902,31 +915,36 @@ colDefs: ColDef[] =  [
     this.capturedona3 = document.querySelector("#grafiDona3");
     this.capturedona4 = document.querySelector("#grafiDona4");
 
-    html2canvas(this.captureElement, { backgroundColor: null, scale: 1 } ).then((canvas: HTMLCanvasElement) => {
+    const canvas = await html2canvas(this.captureElement, { backgroundColor: null, scale: 1 });
+    this.imgData = canvas.toDataURL('image/png');
+    
+    const canvas1 = await html2canvas(this.capturedona1, { backgroundColor: null, scale: 1 });
+    this.imgData1 = canvas1.toDataURL('image/png');
 
-      this.imgData = canvas.toDataURL('image/png');
-      
-    });
-    html2canvas(this.capturedona1, { backgroundColor: null, scale: 1 }).then((canvas: HTMLCanvasElement) => {
+    const canvas2 = await html2canvas(this.capturedona2, { backgroundColor: null, scale: 1 });
+    this.imgData2 = canvas2.toDataURL('image/png');
 
-      this.imgData1 = canvas.toDataURL('image/png');
-      
-    });
-    html2canvas(this.capturedona2, { backgroundColor: null, scale: 1 }).then((canvas: HTMLCanvasElement) => {
+    const canvas3 = await html2canvas(this.capturedona3, { backgroundColor: null, scale: 1 });
+    this.imgData3 = canvas3.toDataURL('image/png');
 
-      this.imgData2 = canvas.toDataURL('image/png');
-      
-    });
-    html2canvas(this.capturedona3, { backgroundColor: null, scale: 1 }).then((canvas: HTMLCanvasElement) => {
+    const canvas4 = await html2canvas(this.capturedona4, { backgroundColor: null, scale: 1 });
+    this.imgData4 = canvas4.toDataURL('image/png');
 
-      this.imgData3 = canvas.toDataURL('image/png');
-  
-    });
-    html2canvas(this.capturedona4, { backgroundColor: null, scale: 1 }).then((canvas: HTMLCanvasElement) => {
-      
-      this.imgData4 = canvas.toDataURL('image/png');
-      
-    });
+    // html2canvas(this.captureElement, { backgroundColor: null, scale: 1 } ).then((canvas: HTMLCanvasElement) => {
+    //   this.imgData = canvas.toDataURL('image/png');
+    // });
+    // html2canvas(this.capturedona1, { backgroundColor: null, scale: 1 }).then((canvas: HTMLCanvasElement) => {
+    //   this.imgData1 = canvas.toDataURL('image/png');
+    // });
+    // html2canvas(this.capturedona2, { backgroundColor: null, scale: 1 }).then((canvas: HTMLCanvasElement) => {
+    //   this.imgData2 = canvas.toDataURL('image/png');
+    // });
+    // html2canvas(this.capturedona3, { backgroundColor: null, scale: 1 }).then((canvas: HTMLCanvasElement) => {
+    //   this.imgData3 = canvas.toDataURL('image/png');
+    // });
+    // html2canvas(this.capturedona4, { backgroundColor: null, scale: 1 }).then((canvas: HTMLCanvasElement) => {
+    //   this.imgData4 = canvas.toDataURL('image/png');
+    // });
 
     //console.log(this.captureElement);
     
@@ -1045,7 +1063,9 @@ colDefs: ColDef[] =  [
       doc.text(textoLargo3,80,360,{ align: 'justify', maxWidth: 645 } );
 
       doc.setFontSize(16);
+      doc.setFont("helvetica", "bold");
       doc.text("PROCESO ATENCIONAL Y PERCEPTUAL",80,460);
+      doc.setFont("helvetica", "normal");
 
       doc.setFontSize(12);
       const textoLargo4 = `Los procesos atencionales juegan un papel fundamental en la conducción, debido al alto flujo de información que se requiere procesar. La atención es el primer proceso cognitivo, que le permite al conductor, estar en comunicación con su entorno. Este proceso se subdivide en los diferentes tipos de atención.`;
@@ -1053,8 +1073,10 @@ colDefs: ColDef[] =  [
 
       doc.addImage(this.imgData1, 'PNG', 80, 585, 150, 150, "graficadona1");
 
+      doc.setFont("helvetica","bold");
       doc.setFontSize(16);
       doc.text("Atención sostenida",260,610);
+      doc.setFont("helvetica", "normal");
 
       doc.setFontSize(12);
       const textoLargo5 = `Hace referencia a la capacidad de atender a un mismo estimulo durante un largo periodo de tiempo. El conductor `+nombreCompletoMayuscula+` obtuvo una puntuación `+this.rangoTotal(this.totalResultadoBaremo[0])+` en esta habilidad, lo que se relaciona con una `+this.califiacionTotal(this.totalResultadoBaremo[0])+` capacidad para enfocarse   en la información relevante mientras se omiten los   elementos distractores.`;
@@ -1072,15 +1094,19 @@ colDefs: ColDef[] =  [
 
       doc.addImage(this.imgData2, 'PNG', 80, 200, 150, 150, "graficadona2");
 
+      doc.setFont("helvetica","bold");
       doc.setFontSize(16);
-      doc.text("Agudeza visual",260,200);
+      doc.text("Agudeza visual",260,210);
+      doc.setFont("helvetica","normal");
 
       doc.setFontSize(12);
       const textoLargo6 = `Hace referencia a la capacidad para percibir estímulos visuales de manera oportuna y detectar aquellos que se consideran relevantes de los irrelevantes. El conductor `+nombreCompletoMayuscula+` obtuvo una puntuación `+this.rangoTotal(this.totalResultadoBaremo[3])+` en esta habilidad. Lo que se relaciona con una `+this.califiacionTotal(this.totalResultadoBaremo[3])+` capacidad de identificar de manera oportuna obstáculos o elementos de riesgo en la vía.`;
       doc.text(textoLargo6,260,250,{ align: 'justify', maxWidth: 465 } );
 
+      doc.setFont("helvetica","bold");
       doc.setFontSize(16);
       doc.text("FUNCIONES EJECUTIVAS",80,400);
+      doc.setFont("helvetica","normal");
 
       doc.setFontSize(12);
       const textoLargo7 = `Las funciones ejecutivas obedecen a aquellas funciones psicológicas superiores, son las encargadas de monitorear y regular los demás procesos cognitivos. Gracias a estos procesos un conductor puede ajustar su conducta de acuerdo con las exigencias del entorno, es decir, regular su velocidad, abstenerse de realizar maniobras peligrosas y establecer estrategias efectivas para la solución de problemas en la vía.`;
@@ -1088,8 +1114,10 @@ colDefs: ColDef[] =  [
 
       doc.addImage(this.imgData3, 'PNG', 80, 550, 150, 150, "graficadona3");
 
+      doc.setFont("helvetica","bold");
       doc.setFontSize(16);
       doc.text("Velocidad de procesamiento",260,555);
+      doc.setFont("helvetica","normal");
 
       doc.setFontSize(12);
       const textoLargo8 = `Hace referencia a la capacidad para percibir estímulos visuales de manera oportuna y detectar aquellos que se consideran relevantes de los irrelevantes. El conductor `+nombreCompletoMayuscula+` obtuvo una puntuación `+this.rangoTotal(this.totalResultadoBaremo[2])+` en esta habilidad. Lo que se relaciona con una `+this.califiacionTotal(this.totalResultadoBaremo[2])+` capacidad de identificar de manera oportuna obstáculos o elementos de riesgo en la vía.`;
@@ -1097,12 +1125,14 @@ colDefs: ColDef[] =  [
 
       doc.addImage(this.imgData4, 'PNG', 80, 750, 150, 150, "graficadona4");
 
+      doc.setFont("helvetica","bold");
       doc.setFontSize(16);
-      doc.text("Control inhibitorio",260,755);
+      doc.text("Control inhibitorio",260,750);
+      doc.setFont("helvetica","normal");
 
       doc.setFontSize(12);
       const textoLargo9 = `Se refiere a la capacidad para responder de manera oportuna frente a las situaciones, utilizando una conducta apropiada, de acuerdo con el contexto y eliminando aquella respuesta automática que no se ajusta a los requerimientos del entorno. El conductor `+nombreCompletoMayuscula+`, obtuvo una puntuación `+this.rangoTotal(this.totalResultadoBaremo[1])+` en esta habilidad. Lo que se relaciona con una `+this.califiacionTotal(this.totalResultadoBaremo[1])+` capacidad para orientar su respuesta frente a cualquier estimulo en la vía`;
-      doc.text(textoLargo9,260,795,{ align: 'justify', maxWidth: 465 } );
+      doc.text(textoLargo9,260,790,{ align: 'justify', maxWidth: 465 } );
 
       doc.addPage();////PAGINA 4
 
@@ -1127,7 +1157,20 @@ colDefs: ColDef[] =  [
       }
       doc.text(textoLargo11,80,360,{ align: 'justify', maxWidth: 645 } );
 
-      doc.addImage('../../assets/apto.png', 'png', (doc.internal.pageSize.width - 200) / 2, 460, 200, 80,"estado");
+      let estado = this.califiacionTotal(this.totalResultadoBaremo[4]);
+      let urlstado:string;
+      if (estado === "BUENA"){
+        doc.addImage('../../assets/apto.png', 'png', (doc.internal.pageSize.width - 200) / 2, 460, 200, 80,"estado");
+        urlstado = "apto.png";
+      }else if(estado === "ADECUADA"){
+        doc.addImage('../../assets/aptobajorecomendacion.png', 'png', (doc.internal.pageSize.width - 266) / 2, 460, 266, 80,"estado");
+        urlstado = "aptobajorecomendacion.png";
+      }else{
+        doc.addImage('../../assets/noapto.png', 'png', (doc.internal.pageSize.width - 200) / 2, 460, 200, 70,"estado");
+        urlstado = "noapto.png";
+      }
+
+      
 
       doc.addImage('../../assets/firma_quevedo_barrios.png', 'png', 120, 820, 200, 80,"firma");
 
@@ -1140,7 +1183,66 @@ colDefs: ColDef[] =  [
       doc.text("Magister en Neuropsicología",80,920);
       doc.text("ES&VA SOLUCIONES INTEGRALES S.A.S.",80,940);
 
-      doc.save('david.pdf');
+      doc.save(this.fechaActual.toISOString().slice(0, 10)+' '+nombreCompletoMayuscula+'.pdf'); // CREA EL ARCHIVIO PDF
+
+      /// GUARDO EN BD LA INFORMACION GENERADA
+
+      const form: resultadostotalI = {
+
+        nombrecompleto: this.unpaciente.nombre+" "+this.unpaciente.apellidos,
+        identificacion: this.unpaciente.dni,
+        edad: this.unpaciente.edad,
+        escolaridad: this.unpaciente.escolaridad,
+        lateralidad: this.unpaciente.lateralidad,
+        gravedad: this.unpaciente.gravedad,
+        accidentesreportados: this.unpaciente.numaccidentes,
+        antecedentes: this.unpaciente.antecedentes,
+        atsostenida: this.forgafica1.get('atsostenida').value,
+        atalternante: this.forgafica1.get('atalternante').value,
+        tiemporespuesta: this.forgafica1.get('trespuesta').value,
+        controlinhibitorio: this.forgafica1.get('ctrinhibitorio').value,
+        atsostenida2: this.forgafica1.get('atsostenida2').value,
+        atalternante2: this.forgafica1.get('atalternante2').value,
+        tiemporespuesta2: this.forgafica1.get('trespuesta2').value,
+        controlinhibitorio2: this.forgafica1.get('ctrinhibitorio2').value,
+        rango1: this.rangoTotal(this.totalResultadoBaremo[0]),
+        rango2: this.rangoTotal(this.totalResultadoBaremo[3]),
+        rango3: this.rangoTotal(this.totalResultadoBaremo[2]),
+        rango4: this.rangoTotal(this.totalResultadoBaremo[1]),
+        rangototal: this.rangoTotal(this.totalResultadoBaremo[4]),
+        calificacion1: this.califiacionTotal(this.totalResultadoBaremo[0]),
+        calificacion2: this.califiacionTotal(this.totalResultadoBaremo[3]),
+        calificacion3: this.califiacionTotal(this.totalResultadoBaremo[2]),
+        calificacion4: this.califiacionTotal(this.totalResultadoBaremo[1]),
+        calificaciontotal: this.totalResultadoBaremo[4],
+        valor1: this.forgafica2.get('Valor1').value,
+        valor2: this.forgafica2.get('Valor2').value,
+        valor3: this.forgafica2.get('Valor3').value,
+        valor4: this.forgafica2.get('Valor4').value,
+        valor5: this.forgafica2.get('Valor5').value,
+        valor6: this.forgafica2.get('Valor6').value,
+        valor7: this.forgafica2.get('Valor7').value,
+        valor8: this.forgafica2.get('Valor8').value,
+        conclusiones: textoLargo11,
+        nombreprofe: "PSI. Daniela Fernanda Quevedo Barrios",
+        estudioprofe: "Magister en Neuropsicología",
+        urlestado: urlstado,
+        urlfirma: "firma_quevedo_barrios.png",
+        //fecha: this.unpaciente.edad, el servidor pone la fecha
+        id_ctp_resultados: this.ultimoElemento.ctpid,
+        estado: "1",
+        token: "c890eaf03d0b47cc7b64df1647630c16"
+  
+      }
+
+      this.resultadostotal.agreagarresultados(form).subscribe(data =>{
+        //console.log(data);
+      })
+
+      this.isLoading=false;
+      this.btncreainforme = false; // boton de crear informe se deshabilita 
+      this.cerrarmoda3.dismiss();
+      this.cerrarmoda4.dismiss();
 
     }, 3000);
   
@@ -1245,7 +1347,6 @@ colDefs: ColDef[] =  [
       v1 = valor4[indiceAleatorio];
     } else if (omi == 9) {
       let valor5 = [10, 9];
-      console.log("entro");
       let indiceAleatorio = Math.floor(Math.random() * valor5.length);
       v1 = valor5[indiceAleatorio];
     } else if (omi == 10) {
@@ -1446,12 +1547,12 @@ colDefs: ColDef[] =  [
 
     let cTpTotal = (omision+agudeza+trTotal+contInh)/4
     let cTpTotal2 = parseFloat( cTpTotal.toFixed(0) );
-    console.log(omision);
-    console.log(contInh);
-    console.log(trTotal);
-    console.log(agudeza);
+    //console.log(omision);
+    //console.log(contInh);
+    //console.log(trTotal);
+    //console.log(agudeza);
 
-    console.log(cTpTotal2);
+    //console.log(cTpTotal2);
     //this.rangoTotal(cTpTotal);
 
     return total = [omision,contInh,trTotal,agudeza,cTpTotal2];
@@ -1486,32 +1587,290 @@ colDefs: ColDef[] =  [
     return estado;
   }
 
-  generaInforme(pdfFile: string){
+  async generaInforme(){
 
-    const formData = new FormData();
-    formData.append('pdf', pdfFile); // El nombre del archivo debe coincidir con el que guardaste localmente
+    this.isLoading = true;
 
-    const options = {
-      headers: new HttpHeaders({'enctype': 'multipart/form-data'})
+    const doc = new jsPDF({
+      orientation: 'portrait',
+      unit: 'px',
+      format: 'letter',
+      hotfixes: ["px_scaling"]
+    });
+
+    let nombreCompletoMayuscula = this.tomodatosdescarga.nombrecompleto;
+
+    this.captureElement = document.querySelector("#grafiRadar");
+    this.capturedona1 = document.querySelector("#grafiDona5");
+    this.capturedona2 = document.querySelector("#grafiDona6");
+    this.capturedona3 = document.querySelector("#grafiDona7");
+    this.capturedona4 = document.querySelector("#grafiDona8");
+
+    const canvas = await html2canvas(this.captureElement, { backgroundColor: null, scale: 1 });
+    this.imgData = canvas.toDataURL('image/png');
+    
+    const canvas1 = await html2canvas(this.capturedona1, { backgroundColor: null, scale: 1 });
+    this.imgData1 = canvas1.toDataURL('image/png');
+
+    const canvas2 = await html2canvas(this.capturedona2, { backgroundColor: null, scale: 1 });
+    this.imgData2 = canvas2.toDataURL('image/png');
+
+    const canvas3 = await html2canvas(this.capturedona3, { backgroundColor: null, scale: 1 });
+    this.imgData3 = canvas3.toDataURL('image/png');
+
+    const canvas4 = await html2canvas(this.capturedona4, { backgroundColor: null, scale: 1 });
+    this.imgData4 = canvas4.toDataURL('image/png');
+    
+
+    //console.log(this.captureElement);
+    
+    // Coordenadas para centrar la imagen en la página
+    //const x = (doc.internal.pageSize.width - imgWidth) / 2;
+    //const y = (doc.internal.pageSize.height - imgHeight) / 2;
+    
+    // Obtener el ancho completo de la hoja en píxeles
+    const pageWidth = doc.internal.pageSize.width; // Ancho de la hoja en píxeles
+    const pageHeight = doc.internal.pageSize.height; // Alto de la hoja en píxeles
+    
+    // // Agregar imagen en la parte superior de la página
+    doc.addImage('../../assets/top.png', 'png', 0, 0, pageWidth, 100,"top");
+ 
+    // Datos de ejemplo para la tabla
+    var data = [
+      // Las tres últimas celdas están combinadas en la primera fila
+      ["Nombre y apellidos :", { content: nombreCompletoMayuscula, colSpan: 3 }],
+      ["Identifiación :", this.tomodatosdescarga.identificacion, "Edad :", this.tomodatosdescarga.edad+" años"],
+      ["Escolaridad :", this.escolaridad(this.tomodatosdescarga.escolaridad), "Lateralidad :",this.lateralidad(this.tomodatosdescarga.lateralidad)],
+      ["Gravedad :", this.gravedad(this.tomodatosdescarga.gravedad), "Accidentes reportados :", this.tomodatosdescarga.accidentesreportados],
+      ["Antecedentes :", { content: this.tomodatosdescarga.antecedentes, colSpan: 3 }]
+    ];
+
+    // Opciones para la tabla
+    var options = {
+      margin: { top: 20 }, // Margen superior
+      startY: 200, // Posición inicial de la tabla
+      headStyles: {
+          fillColor: [253, 187, 55], // Color de fondo del encabezado
+          textColor: [0, 0, 0], // Color del texto del encabezado
+          fontStyle: 'bold', // Estilo de fuente del encabezado
+          lineWidth: 1 // Ancho de borde
+      },
+      bodyStyles: {
+        lineWidth: 1, // Ancho de borde para el cuerpo de la tabla
+      },
+      columnStyles: {
+        
+        // Primera y segunda columna con ancho automático
+        0: { cellWidth: 'auto'},
+        1: { cellWidth: 'auto'},
+        2: { cellWidth: 'auto'},
+        3: { cellWidth: 'auto'},
+        // Especifica la combinación de celdas para la primera fila
+        // row: {
+        //   0: { 1: { colspan: 3 } } // Combinar las tres últimas celdas en la primera fila
+        // }
+      }
     };
 
-    // Realiza una solicitud HTTP POST al servidor para enviar el PDF
-    this.http.post('http://localhost/ververver/resultadostotal', formData, options)
-      .subscribe({
-        next: (response: any) => {
-          console.log('Respuesta del servidor:', response);
-          // Maneja la respuesta del servidor
-        },
-        error: (error: any) => {
-          console.error('Error al guardar PDF en el servidor:', error);
-          // Maneja el error
-        }
-      });
-    
+    // Agregar la tabla al documento
+    //autoTable(doc, { html: '#my-table' })
+    autoTable(doc,{
+      head: [
+        [{content: 'EVALUACIÓN COGNITIVA ATENCIONAL', styles: {fontSize: 14, halign: 'center', fillColor: [255, 217, 102], textColor: [0, 0, 0], lineWidth: 1 },colSpan: 4}],
+        [{content: 'CONDUCTORES VEHÍCULOS LINEA BLANCA', styles: {fontSize: 13, halign: 'center', fillColor: [217, 217, 217], textColor: [0, 0, 0], lineWidth: 1 },colSpan: 4}],
+        // ["Nombre", "Apellido", "Información Personal", "ver"]
+      ], // Títulos a la derecha
+      body: data.slice(0), // Cuerpo de la tabla
+      // Opciones de la tabla
+      margin: { top: 20, left: 114, right: 114, bottom: 20 }, // Margen superior
+      startY: 160, // Posicion en la hoja
+      bodyStyles: {
+        lineWidth: 1, // Ancho de borde para el cuerpo de la tabla
+      },
 
+
+    });
+
+    // Agregar imagen de fondo como marca de agua
+
+    let x = (pageWidth - 600) / 2;
+    let y = (pageHeight - 500) / 2;
+
+    doc.addImage('../../assets/fondo3.png', 'png', x, y, 600, 500,"mid");
+
+    doc.addImage('../../assets/bot.png', 'png', 0, pageHeight-100, 816, 100,"bot");
+
+    // // Agregar imagen en la parte inferior de la página
+     //doc.addImage('../../assets/bot3.png', 'png', 40, 594-20 , 377,7,"bot");
+     //doc.addImage('../../assets/top.png', 'png', 10, 10 , 50,50,"bot");
+     //doc.addImage('../../assets/bot3.png', 'png', 70, 10 , 50,50,"bot");
+    
+    // // Agregar contenido al documento
+    // Especificar la fuente, tamaño y estilo del título
+    doc.setFontSize(12);
+    const textoLargo = `A continuación, se describe el perfil general del rendimiento en la evaluación cognitiva, el cual contempla procesos atencionales y funciones ejecutivas, el ítem de atención sostenida evidencia una ponderación de los aciertos logrados en la ejecución de la prueba “CPT”. El ítem de Velocidad de procesamiento, el cual se establece a partir del tiempo de respuesta que se otorga posterior a la aparición del estímulo, y el ítem Control inhibitorio, el cual contempla la capacidad de inhibir o bloquear conductas inapropiadas o distractores.`;
+    doc.text(textoLargo,80,420,{ align: 'justify', maxWidth: 645 } );
+
+    doc.setFontSize(16);
+    doc.text("Perfil Neurocognitivo",doc.internal.pageSize.getWidth() / 2,580,{ align: 'center' } );
+
+
+    setTimeout(() => {
+      doc.addImage(this.imgData, 'PNG', (doc.internal.pageSize.width - 420) / 2, 580, 420, 420, "graficaradio");
+
+      doc.addPage(); ///PAGINA 2
+
+      // // Agregar imagen en la parte superior de la página
+      doc.addImage('../../assets/top.png', 'png', 0, 0, pageWidth, 100,"top");
+
+      doc.addImage('../../assets/fondo3.png', 'png', x, y, 600, 500,"mid");
+
+      doc.addImage('../../assets/bot.png', 'png', 0, pageHeight-100, 816, 100,"bot");
+
+      doc.setFontSize(24);
+      doc.text("Perfil Cognitivo",80,200);
+
+      doc.setFontSize(12);
+      const textoLargo2 = `En este apartado se discrimina por cada habilidad cognitiva evaluada junto con el puntaje correspondiente alcanzado, en una escala de 0-100. Que le permite compararlo frente a un grupo de referencia. Los valores calculados se obtienen a partir de una puntuación global de la prueba y se reajustan a la escala 0-100. A mayor puntuación obtenida, mayor rendimiento.`;
+      doc.text(textoLargo2,80,260,{ align: 'justify', maxWidth: 645 } );
+
+      doc.setFontSize(12);
+      const textoLargo3 = `La conducción representa un compromiso cognitivo significativo, por el alto nivel de información que se procesa y su flujo constante. A continuación, se describen los procesos cognitivos críticos y claves en el ejercicio de la conducción.`;
+      doc.text(textoLargo3,80,360,{ align: 'justify', maxWidth: 645 } );
+
+      doc.setFontSize(16);
+      doc.setFont("helvetica", "bold");
+      doc.text("PROCESO ATENCIONAL Y PERCEPTUAL",80,460);
+      doc.setFont("helvetica", "normal");
+
+      doc.setFontSize(12);
+      const textoLargo4 = `Los procesos atencionales juegan un papel fundamental en la conducción, debido al alto flujo de información que se requiere procesar. La atención es el primer proceso cognitivo, que le permite al conductor, estar en comunicación con su entorno. Este proceso se subdivide en los diferentes tipos de atención.`;
+      doc.text(textoLargo4,80,490,{ align: 'justify', maxWidth: 645 } );
+
+      doc.addImage(this.imgData1, 'PNG', 80, 585, 150, 150, "graficadona1");
+
+      doc.setFont("helvetica","bold");
+      doc.setFontSize(16);
+      doc.text("Atención sostenida",260,610);
+      doc.setFont("helvetica", "normal");
+
+      doc.setFontSize(12);
+      const textoLargo5 = `Hace referencia a la capacidad de atender a un mismo estimulo durante un largo periodo de tiempo. El conductor `+nombreCompletoMayuscula.toUpperCase()+` obtuvo una puntuación `+this.tomodatosdescarga.rango1+` en esta habilidad, lo que se relaciona con una `+this.tomodatosdescarga.calificacion1+` capacidad para enfocarse   en la información relevante mientras se omiten los   elementos distractores.`;
+      doc.text(textoLargo5,260,650,{ align: 'justify', maxWidth: 465 } );
+
+      doc.addImage('../../assets/informe3.png', 'png', (doc.internal.pageSize.width - 200) / 2, 750, 200, 200,"celular");
+
+      doc.addPage();////PAGINA 3
+
+      // // Agregar imagen en la parte superior de la página
+      doc.addImage('../../assets/top.png', 'png', 0, 0, pageWidth, 100,"top");
+      doc.addImage('../../assets/fondo3.png', 'png', x, y, 600, 500,"mid");
+      doc.addImage('../../assets/bot.png', 'png', 0, pageHeight-100, 816, 100,"bot");
+
+
+      doc.addImage(this.imgData2, 'PNG', 80, 200, 150, 150, "graficadona2");
+
+      doc.setFont("helvetica","bold");
+      doc.setFontSize(16);
+      doc.text("Agudeza visual",260,210);
+      doc.setFont("helvetica","normal");
+
+      doc.setFontSize(12);
+      const textoLargo6 = `Hace referencia a la capacidad para percibir estímulos visuales de manera oportuna y detectar aquellos que se consideran relevantes de los irrelevantes. El conductor `+nombreCompletoMayuscula.toUpperCase()+` obtuvo una puntuación `+this.tomodatosdescarga.rango2+` en esta habilidad. Lo que se relaciona con una `+this.tomodatosdescarga.calificacion2+` capacidad de identificar de manera oportuna obstáculos o elementos de riesgo en la vía.`;
+      doc.text(textoLargo6,260,250,{ align: 'justify', maxWidth: 465 } );
+
+      doc.setFont("helvetica","bold");
+      doc.setFontSize(16);
+      doc.text("FUNCIONES EJECUTIVAS",80,400);
+      doc.setFont("helvetica","normal");
+
+      doc.setFontSize(12);
+      const textoLargo7 = `Las funciones ejecutivas obedecen a aquellas funciones psicológicas superiores, son las encargadas de monitorear y regular los demás procesos cognitivos. Gracias a estos procesos un conductor puede ajustar su conducta de acuerdo con las exigencias del entorno, es decir, regular su velocidad, abstenerse de realizar maniobras peligrosas y establecer estrategias efectivas para la solución de problemas en la vía.`;
+      doc.text(textoLargo7,80,440,{ align: 'justify', maxWidth: 645 } );
+
+      doc.addImage(this.imgData3, 'PNG', 80, 550, 150, 150, "graficadona3");
+
+      doc.setFont("helvetica","bold");
+      doc.setFontSize(16);
+      doc.text("Velocidad de procesamiento",260,555);
+      doc.setFont("helvetica","normal");
+
+      doc.setFontSize(12);
+      const textoLargo8 = `Hace referencia a la capacidad para percibir estímulos visuales de manera oportuna y detectar aquellos que se consideran relevantes de los irrelevantes. El conductor `+nombreCompletoMayuscula.toUpperCase()+` obtuvo una puntuación `+this.tomodatosdescarga.rango3+` en esta habilidad. Lo que se relaciona con una `+this.tomodatosdescarga.calificacion3+` capacidad de identificar de manera oportuna obstáculos o elementos de riesgo en la vía.`;
+      doc.text(textoLargo8,260,595,{ align: 'justify', maxWidth: 465 } );
+
+      doc.addImage(this.imgData4, 'PNG', 80, 750, 150, 150, "graficadona4");
+
+      doc.setFont("helvetica","bold");
+      doc.setFontSize(16);
+      doc.text("Control inhibitorio",260,750);
+      doc.setFont("helvetica","normal");
+
+      doc.setFontSize(12);
+      const textoLargo9 = `Se refiere a la capacidad para responder de manera oportuna frente a las situaciones, utilizando una conducta apropiada, de acuerdo con el contexto y eliminando aquella respuesta automática que no se ajusta a los requerimientos del entorno. El conductor `+nombreCompletoMayuscula.toUpperCase()+`, obtuvo una puntuación `+this.tomodatosdescarga.rango4+` en esta habilidad. Lo que se relaciona con una `+this.tomodatosdescarga.calificacion4+` capacidad para orientar su respuesta frente a cualquier estimulo en la vía`;
+      doc.text(textoLargo9,260,790,{ align: 'justify', maxWidth: 465 } );
+
+      doc.addPage();////PAGINA 4
+
+      // // Agregar imagen en la parte superior de la página
+      doc.addImage('../../assets/top.png', 'png', 0, 0, pageWidth, 100,"top");
+      doc.addImage('../../assets/fondo3.png', 'png', x, y, 600, 500,"mid");
+      doc.addImage('../../assets/bot.png', 'png', 0, pageHeight-100, 816, 100,"bot");
+
+      doc.setFontSize(24);
+      doc.text("Conclusiones",80,200);
+
+      doc.setFontSize(12);
+      const textoLargo10 = `Según los datos recogidos, el conductor `+nombreCompletoMayuscula.toUpperCase()+` obtuvo una puntuación general de `+this.tomodatosdescarga.calificaciontotal+`, lo que lo ubica en el rango `+this.tomodatosdescarga.rangototal+`, esto indica que se ajusta a los requerimientos del cargo, teniendo en cuenta su desempeño en los perfiles neurocognitivos y neuropsicológicos.`;
+      doc.text(textoLargo10,80,260,{ align: 'justify', maxWidth: 645 } );
+
+      doc.setFontSize(12);
+      let textoLargo11:any;
+      if (this.forgafica3.get('conclusiones').value == ""){
+        textoLargo11 = `Se recomienda realizar seguimientos en aquellas áreas donde el rendimiento no alcanzó la mayor puntuación, de modo que sea posible entrenar cognitivamente estas áreas tales como la atención y la velocidad de procesamiento y sea posible potencializar aquellas que ya se encuentran en rangos altos.`;
+      }else{
+        textoLargo11 = this.forgafica3.get('conclusiones').value;
+      }
+      doc.text(textoLargo11,80,360,{ align: 'justify', maxWidth: 645 } );
+
+      let estado = this.califiacionTotal(this.tomodatosdescarga.calificaciontotal);
+ 
+      if (estado === "BUENA"){
+        doc.addImage('../../assets/apto.png', 'png', (doc.internal.pageSize.width - 200) / 2, 460, 200, 80,"estado");
+     
+      }else if(estado === "ADECUADA"){
+        doc.addImage('../../assets/aptobajorecomendacion.png', 'png', (doc.internal.pageSize.width - 266) / 2, 460, 266, 80,"estado");
+   
+      }else{
+        doc.addImage('../../assets/noapto.png', 'png', (doc.internal.pageSize.width - 200) / 2, 460, 200, 70,"estado");
+
+      }
+
+      
+
+      doc.addImage('../../assets/firma_quevedo_barrios.png', 'png', 120, 820, 200, 80,"firma");
+
+
+      doc.setFontSize(12);
+      doc.text("_________________________________________",80,880);
+      doc.setFont("helvetica", "normal", "bold");
+      doc.text("PSI. Daniela Fernanda Quevedo Barrios",80,900);
+      doc.setFont("helvetica", "normal");
+      doc.text("Magister en Neuropsicología",80,920);
+      doc.text("ES&VA SOLUCIONES INTEGRALES S.A.S.",80,940);
+
+      doc.save(this.tomodatosdescarga.fecha+' '+nombreCompletoMayuscula+'.pdf'); // CREA EL ARCHIVIO PDF
+
+      this.isLoading = false;
+      
+    
+    }, 4000);
+
+    
   }
   
-    
+
+  
 
 
 }

@@ -340,7 +340,7 @@
 
 	</div>
 	<div class="modal-footer">
-    <button type="button" ngbAutofocus class="btn btn-outline-info" (click)="activomodal4(modal4)">Crear Informe</button>
+    <button type="button" ngbAutofocus [ngClass]="{'btn btn-outline-info disabled': btncreainforme, 'btn btn-outline-info': !btncreainforme}" (click)="activomodal4(modal4)" [disabled]="btncreainforme" >Crear Informe</button>
 		<button type="button" class="btn btn-secondary" (click)="modal.close('Close click')">Close</button>
 	</div>
 </ng-template>
@@ -352,6 +352,11 @@
 		<button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
 	</div>
 	<div class="modal-body">
+    <div *ngIf="isLoading" class="loading-spinner-overlay">
+      <div class="loading-spinner"></div>
+      <p>Procesando...</p>
+    </div>
+
 		<p>
 			Perfil Neurocongnitivo
 		</p>
@@ -377,7 +382,7 @@
           <div class="col-md-3">
 
               <div class="mb-3">
-                <label for="atalternante" class="form-label">At. Alternante</label>
+                <label for="atalternante" class="form-label">Agudeza visual</label>
                 <input type="number" min="0" class="form-control" id="atalternante" formControlName="atalternante" (input)="actualizarGraficoOnChange()" >
                 <div  class="text-danger" *ngIf="formueditar.get('atalternante')?.invalid && formueditar.get('atalternante')?.touched">
                   <div *ngIf="this.formueditar.get('atalternante')?.hasError('required');">0 valor minimo.</div>
@@ -676,17 +681,22 @@
 	</div>
 	<div class="modal-footer">
 		<button type="button" class="btn btn-secondary" (click)="modal.close('Close click')">Close</button>
-    <button type="button" ngbAutofocus class="btn btn-primary" (click)="modal.close(imprimir())">Descargar</button>
+    <button type="button" ngbAutofocus class="btn btn-primary" (click)="imprimir()">Descargar</button>
 	</div>
 </ng-template>
 
 <!-- modal 5 genera link -->
 <ng-template #modal5 let-modal>
 	<div class="modal-header">
-		<h4 class="modal-title">Link Creado</h4>
+		<h4 class="modal-title">Previsualización</h4>
 		<button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
 	</div>
 	<div class="modal-body" *ngIf="tomodatosdescarga">
+
+    <div *ngIf="isLoading" class="loading-spinner-overlay">
+      <div class="loading-spinner"></div>
+      <p>Procesando...</p>
+    </div>
 
     <div class="row">
       <div class="col-md-2"></div>
@@ -713,15 +723,19 @@
             </tr>
             <tr>
               <td> Escolaridad :  </td>
-              <td> {{tomodatosdescarga.escolaridad}} </td>
+              <td> {{escolaridad(tomodatosdescarga.escolaridad)}} </td>
               <td> Lateralidad :  </td>
-              <td> {{tomodatosdescarga.lateralidad}} </td>
+              <td> {{lateralidad(tomodatosdescarga.lateralidad)}} </td>
             </tr>
             <tr>
               <td> Gravedad :  </td>
-              <td> {{tomodatosdescarga.gravedad}} </td>
+              <td> {{gravedad(tomodatosdescarga.gravedad)}} </td>
               <td> Accidentes reportados :  </td>
               <td> {{tomodatosdescarga.accidentesreportados}} </td>
+            </tr>
+            <tr>
+              <td> Antecedentes : </td>
+              <td colspan="3"> {{tomodatosdescarga.antecedentes }}</td>
             </tr>
           </tbody>
         </table>
@@ -772,13 +786,16 @@
         <div class="col-md-3">
           <div id="grafiDona5" class="card flex justify-content-center">
             <p-chart id="grafico5" type="doughnut" [data]="data5" [options]="options5"></p-chart>
+            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 30px; font-weight: bold;">
+              <h1 style="font-size: 64px;margin-top: 28px;"><b>{{tomodatosdescarga.valor1}}</b></h1>
+            </div>
           </div>
         </div>
         <div class="col-md-9">
           <h2>Atención sostenida</h2>
           <p>Hace referencia a la capacidad de atender a un mismo estimulo
-            durante un largo periodo de tiempo. El conductor <b>{{tomodatosdescarga.nombrecompleto}}</b> obtuvo una puntuación «RANGO_OM» en esta
-            habilidad, lo que se relaciona con una «CALIF_OM» capacidad
+            durante un largo periodo de tiempo. El conductor {{tomodatosdescarga.nombrecompleto}} obtuvo una puntuación {{tomodatosdescarga.rango1}} en esta
+            habilidad, lo que se relaciona con una {{tomodatosdescarga.calificacion1}} capacidad
             para enfocarse en la información relevante mientras se omiten
             los elementos distractores.</p>
         </div>
@@ -786,15 +803,18 @@
       <br>
       <div class="row">
         <div class="col-md-3">
-          <div id="grafiDona5" class="card flex justify-content-center">
+          <div id="grafiDona6" class="card flex justify-content-center">
             <p-chart id="grafico6" type="doughnut" [data]="data6" [options]="options6"></p-chart>
+            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 30px; font-weight: bold;">
+              <h1 style="font-size: 64px;margin-top: 28px;"><b>{{tomodatosdescarga.valor3}}</b></h1>
+            </div>
           </div>
         </div>
         <div class="col-md-9">
           <h2>Agudeza visual</h2>
           <p>Hace referencia a la capacidad de atender a un mismo estimulo
-            durante un largo periodo de tiempo. El conductor <b>{{tomodatosdescarga.nombrecompleto}}</b> obtuvo una puntuación «RANGO_OM» en esta
-            habilidad, lo que se relaciona con una «CALIF_OM» capacidad
+            durante un largo periodo de tiempo. El conductor {{tomodatosdescarga.nombrecompleto}} obtuvo una puntuación {{tomodatosdescarga.rango2}} en esta
+            habilidad, lo que se relaciona con una {{tomodatosdescarga.calificacion2}} capacidad
             para enfocarse en la información relevante mientras se omiten
             los elementos distractores.</p>
         </div>
@@ -811,16 +831,19 @@
         <br>
       <div class="row">
         <div class="col-md-3">
-          <div id="grafiDona5" class="card flex justify-content-center">
+          <div id="grafiDona7" class="card flex justify-content-center">
             <p-chart id="grafico7" type="doughnut" [data]="data7" [options]="options7"></p-chart>
+            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 30px; font-weight: bold;">
+              <h1 style="font-size: 64px;margin-top: 28px;"><b>{{tomodatosdescarga.valor5}}</b></h1>
+            </div>
           </div>
         </div>
         <div class="col-md-9">
           <h2>Velocidad de procesamiento</h2>
           <p>Hace referencia a la capacidad para percibir estímulos visuales
             de manera oportuna y detectar aquellos que se consideran
-            relevantes de los irrelevantes. El conductor <b>{{tomodatosdescarga.nombrecompleto}}</b> obtuvo una puntuación «RANGO_AG» en esta
-            habilidad. Lo que se relaciona con una «CALIF_AG» capacidad
+            relevantes de los irrelevantes. El conductor {{tomodatosdescarga.nombrecompleto}} obtuvo una puntuación {{tomodatosdescarga.rango3}} en esta
+            habilidad. Lo que se relaciona con una {{tomodatosdescarga.calificacion3}} capacidad
             de identificar de manera oportuna obstáculos o elementos de
             riesgo en la vía.</p>
         </div>
@@ -830,6 +853,9 @@
         <div class="col-md-3">
           <div id="grafiDona8" class="card flex justify-content-center">
             <p-chart id="grafico8" type="doughnut" [data]="data8" [options]="options8"></p-chart>
+            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 30px; font-weight: bold;">
+              <h1 style="font-size: 64px;margin-top: 28px;"><b>{{tomodatosdescarga.valor7}}</b></h1>
+            </div>
           </div>
         </div>
         <div class="col-md-9">
@@ -838,24 +864,24 @@
             frente a las situaciones, utilizando una conducta apropiada, de
             acuerdo con el contexto y eliminando aquella respuesta
             automática que no se ajusta a los requerimientos del entorno. El
-            conductor <b>{{tomodatosdescarga.nombrecompleto}}</b>, obtuvo una puntuación
-            «RANGO_COM» en esta habilidad. Lo que se relaciona con una
-            «CALIF_COM» capacidad para orientar su respuesta frente a
+            conductor {{tomodatosdescarga.nombrecompleto}}, obtuvo una puntuación
+            {{tomodatosdescarga.rango4}} en esta habilidad. Lo que se relaciona con una
+            {{tomodatosdescarga.calificacion4}} capacidad para orientar su respuesta frente a
             cualquier estimulo en la vía.</p>
         </div>
       </div>
 
       <h1>Conclusiones</h1>
 
-      <p>Según los datos recogidos, el conductor <b>{{tomodatosdescarga.nombrecompleto}}</b> obtuvo una
-        puntuación general de «CPT_TOTAL», lo que lo ubica en el rango «RANGO_FINAL», esto
+      <p>Según los datos recogidos, el conductor {{tomodatosdescarga.nombrecompleto}} obtuvo una
+        puntuación general de {{tomodatosdescarga.calificaciontotal}}, lo que lo ubica en el rango {{tomodatosdescarga.rangototal}}, esto
         indica que se ajusta a los requerimientos del cargo, teniendo en cuenta su desempeño en
         los perfiles neurocognitivos y neuropsicológicos.
         </p>
 
       <p>{{tomodatosdescarga.conclusiones}}</p>
       <div style="text-align: center;">
-        <img src="./assets/apto.png" width="130"  class="me-2" class="img-fluid" alt="...">
+        <img [src]="'./assets/'+tomodatosdescarga.urlestado" width="190"  class="me-2" class="img-fluid" alt="...">
       </div>
 
       <br>
@@ -871,10 +897,11 @@
 	</div>
 	<div class="modal-footer">
 		<button type="button" class="btn btn-secondary" (click)="modal.close('Close click')">Close</button>
-    <button type="button" ngbAutofocus class="btn btn-primary" (click)="modal.close(guardar())">Descargar</button>
+    <button type="button" ngbAutofocus class="btn btn-primary" (click)="generaInforme()">Descargar</button>
 	</div>
 </ng-template>
-  
+
+
 
 
 

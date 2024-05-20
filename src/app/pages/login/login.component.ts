@@ -57,7 +57,7 @@ export class LoginComponent {
           this.errorstatus = true;
           this.errormensaje = dataResponse.result.error_msg;
         }
-        console.log(data);
+        //console.log(data);
       })
       
 

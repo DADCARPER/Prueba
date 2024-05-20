@@ -11,6 +11,7 @@ export interface resultadostotalI {
   lateralidad: string;
   gravedad: string;
   accidentesreportados: string;
+  antecedentes: string;
   atsostenida: string | number;
   atalternante: string;
   tiemporespuesta: string;
@@ -40,8 +41,9 @@ export interface resultadostotalI {
   conclusiones: string;
   nombreprofe: string;
   estudioprofe: string;
+  urlestado: string;
   urlfirma: string;
-  fecha: string;
+  fecha?: string;
   id_ctp_resultados: string;
   estado: string;
   token?: string;
@@ -59,8 +61,8 @@ export interface ResponseI {
 })
 export class ResultadosService {
 
-  //url :string = "https://api.prevencionvialintegral.com/"; 
-  url :string = "http://localhost/ververver/";
+  url :string = "https://api.prevencionvialintegral.com/"; 
+  //url :string = "http://localhost/ververver/";
 
   constructor( private http:HttpClient) { }
 

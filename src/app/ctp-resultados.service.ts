@@ -27,8 +27,8 @@ export interface ResponseI {
 })
 export class CtpResultadosService {
 
-  //url :string = "https://api.prevencionvialintegral.com/"; 
-  url :string = "http://localhost/ververver/";
+  url :string = "https://api.prevencionvialintegral.com/"; 
+  //url :string = "http://localhost/ververver/";
 
   constructor( private http:HttpClient) { }
 

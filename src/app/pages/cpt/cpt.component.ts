@@ -96,7 +96,7 @@ export class CptComponent {
         this.cadena = params['dni'];
         
         if (!/^\d{2,12}$/.test(this.cadena)) {
-          console.error('La URL no es valida no tiene entre 2 y 12 caracteres.');
+          //console.error('La URL no es valida no tiene entre 2 y 12 caracteres.');
           // Puedes manejar la situación de que no sea un número válido o tenga una longitud incorrecta aquí, por ejemplo, establecer un valor predeterminado o mostrar un mensaje de error al usuario.
         } else {
           // Aquí puedes agregar la lógica adicional para manejar el parámetro "dni" si es válido.
@@ -109,21 +109,21 @@ export class CptComponent {
               //console.log(this.idpaciente[0].pacienteid);
               this.mostrarBoton =true;
             }else{
-              console.error('No se encontro paciente registrado.');
+              //console.error('No se encontro paciente registrado.');
             }
             
           })
         }
       } else {
         // Redirigir o mostrar un mensaje de error si el parámetro 'dni' no está presente
-        console.error('Parámetro "dni" no encontrado en la URL');
+        //console.error('Parámetro "dni" no encontrado en la URL');
         // Por ejemplo, podrías redirigir a una página de error o establecer un valor predeterminado para 'dni'
       }
 
       // Verificar si hay otros parámetros en la URL y manejarlos en consecuencia
       const otrosParametros = Object.keys(params).filter(param => param !== 'dni');
       if (otrosParametros.length > 0) {
-        console.warn('Otros parámetros presentes en la URL:', otrosParametros);
+        //console.warn('Otros parámetros presentes en la URL:', otrosParametros);
         // Aquí puedes agregar la lógica para manejar otros parámetros si es necesario
       }
     });
@@ -141,37 +141,37 @@ export class CptComponent {
     let obtengonumero = Math.floor(Math.random() * 89); // numero aleatorio
     let generoCaracter = this.bloque1[obtengonumero];
     //console.log(typeof generoCaracter);
-    console.log(generoCaracter+" <- entro PRIMER random -> "+this.caracterAnterior);
+    //console.log(generoCaracter+" <- entro PRIMER random -> "+this.caracterAnterior);
 
     if ( obtengonumero === this.tiempoInicioAnterior || this.caracterAnterior === generoCaracter ){
       obtengonumero = Math.floor(Math.random() * 89); // numero aleatorio
       generoCaracter = this.bloque1[obtengonumero];
-      console.log(generoCaracter+" <- entro SEGUNDO random -> "+this.caracterAnterior);
+      //console.log(generoCaracter+" <- entro SEGUNDO random -> "+this.caracterAnterior);
 
         if(obtengonumero === this.tiempoInicioAnterior || this.caracterAnterior === generoCaracter){
           obtengonumero = Math.floor(Math.random() * 89); // numero aleatorio
           generoCaracter = this.bloque1[obtengonumero];
-          console.log(generoCaracter+" <- entro TERCER random -> "+this.caracterAnterior);
+          //console.log(generoCaracter+" <- entro TERCER random -> "+this.caracterAnterior);
 
             if(obtengonumero === this.tiempoInicioAnterior || this.caracterAnterior === generoCaracter){
               obtengonumero = Math.floor(Math.random() * 89); // numero aleatorio
               generoCaracter = this.bloque1[obtengonumero];
-              console.log(generoCaracter+" <- entro CUARTO random -> "+this.caracterAnterior);
+              //console.log(generoCaracter+" <- entro CUARTO random -> "+this.caracterAnterior);
 
                 if(obtengonumero === this.tiempoInicioAnterior || this.caracterAnterior === generoCaracter){
                   obtengonumero = Math.floor(Math.random() * 89); // numero aleatorio
                   generoCaracter = this.bloque1[obtengonumero];
-                  console.log(generoCaracter+" <- entro QUINTO random -> "+this.caracterAnterior);
+                  //console.log(generoCaracter+" <- entro QUINTO random -> "+this.caracterAnterior);
 
                     if(obtengonumero === this.tiempoInicioAnterior || this.caracterAnterior === generoCaracter){
                       obtengonumero = Math.floor(Math.random() * 89); // numero aleatorio
                       generoCaracter = this.bloque1[obtengonumero];
-                      console.log(generoCaracter+" <- entro SEXTO random -> "+this.caracterAnterior);
+                      //console.log(generoCaracter+" <- entro SEXTO random -> "+this.caracterAnterior);
 
                         if(obtengonumero === this.tiempoInicioAnterior || this.caracterAnterior === generoCaracter){
                           obtengonumero = Math.floor(Math.random() * 89); // numero aleatorio
                           generoCaracter = this.bloque1[obtengonumero];
-                          console.log(generoCaracter+" <- entro SECTIMO random -> "+this.caracterAnterior);
+                          //console.log(generoCaracter+" <- entro SECTIMO random -> "+this.caracterAnterior);
                         }
                     }
                 }
@@ -449,7 +449,7 @@ export class CptComponent {
     }
     
     this.ctpResultadosService.agreagarresultados(form).subscribe(data =>{
-      console.log(data);
+      //console.log(data);
     })
   }
 
