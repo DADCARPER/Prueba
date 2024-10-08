@@ -16,6 +16,7 @@ import { AgChartsAngular } from 'ag-charts-angular';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ButtonModule } from 'primeng/button';
 import { ChartModule } from 'primeng/chart';
+import { DemoComponent } from './pages/demo/demo.component';
 
 
 
@@ -29,7 +30,8 @@ import { ChartModule } from 'primeng/chart';
     RfinalComponent,
     RoutingComponents,
     SuperiorComponent,
-    InferiorComponent
+    InferiorComponent,
+    DemoComponent
   ],
   imports: [
     BrowserModule,

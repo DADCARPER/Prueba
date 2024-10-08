@@ -50,13 +50,11 @@
                 </div>
               </div>
               <div class="mb-3">
-                <label for="correo" class="form-label">Correo electronico</label>
+                <label for="correo" class="form-label">Empresa</label>
                 <input type="mail" class="form-control" id="correo" name="correo" formControlName="correoelectronico">
                 <div  class="text-danger" *ngIf="formuregistro.get('correoelectronico')?.invalid && formuregistro.get('correoelectronico')?.touched">
-                  <div *ngIf="this.formuregistro.get('correoelectronico')?.hasError('required');">Correo obligatorio.</div>
-                  <div *ngIf="this.formuregistro.get('correoelectronico')?.hasError('minlength');">Ingrese un correo valido.</div>
+                  <div *ngIf="this.formuregistro.get('correoelectronico')?.hasError('required');">Empersa es obligatorio.</div>
                   <div *ngIf="this.formuregistro.get('correoelectronico')?.hasError('maxlength');">Limite excedido.</div>
-                  <div *ngIf="this.formuregistro.get('correoelectronico')?.hasError('email');">Correo no valido.</div>
                 </div>
               </div>
             </main>

@@ -7,6 +7,7 @@ import { NuevoComponent } from './pages/nuevo/nuevo.component';
 import { CptComponent } from './pages/cpt/cpt.component';
 import { InformeComponent } from './pages/informe/informe.component';
 import { SalirComponent } from './pages/salir/salir.component';
+import { DemoComponent } from './pages/demo/demo.component';
 
 
 const routes: Routes = [
@@ -45,6 +46,10 @@ const routes: Routes = [
   {
     path: 'informe',
     component: InformeComponent
+  },
+  {
+    path: 'demo',
+    component: DemoComponent
   },
   {
     path: 'salir',

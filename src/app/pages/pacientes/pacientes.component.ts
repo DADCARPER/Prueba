@@ -33,7 +33,7 @@ export class PacientesComponent {
     accidentes: ['0',[Validators.required,Validators.maxLength(2),Validators.minLength(1)]],
     antecedentes: ['',[Validators.maxLength(5000)]],
     gravedad: [0,[Validators.maxLength(1),Validators.minLength(1)]],
-    correoelectronico: ['',[Validators.required,Validators.email,Validators.maxLength(35),Validators.minLength(8)]],
+    correoelectronico: ['',[Validators.required,Validators.maxLength(45)]],
     token: ['',[Validators.required,Validators.maxLength(25),Validators.minLength(3)]]
 
   })

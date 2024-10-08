@@ -1,0 +1,56 @@
+
+
+.stimulus-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+
+  }
+
+  .stimulus {
+    font-size: 250px;
+    font-weight: bold;
+    /*border: 22px solid rgb(0, 0, 0);*/
+    width: 400px;
+    height: 400px;
+  }
+
+footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 120px;
+}
+/* clase para dar opacidad a los texto*/
+
+.fade-in {
+  animation: fadeInAnimation 1s ease-in;
+}
+
+@keyframes fadeInAnimation {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Animación de salida */
+
+@keyframes fadeOutAnimation {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Aplicar animación de salida al elemento */
+
+.fade-out {
+  animation: fadeOutAnimation 1s ease-out;
+}
+

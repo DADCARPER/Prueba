@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef } from '@angular/core';
+import { Component, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { LetrasTiempoService, LetrasTeiempo } from '../../letras-tiempo.service';
 import { CtpResultadosService, resultadosctpI } from '../../ctp-resultados.service';
 import { ApiService } from '../../api.service';
@@ -15,9 +15,13 @@ export class CptComponent {
   
   @ViewChild('audioPlayer') audioPlayerRef: ElementRef<HTMLAudioElement>;
 
+  inicialaprueba: boolean = false;
+  inicialaDemo: boolean = false;
+
   bloque1: string [];
 
   cuentatexto = 0;
+  muestraDemo:number = 3000 // Tiempo entre letra y letra 
   muestrab1: number = 1000; //1000
   muestrab2: number = 4000; //4000
   muestrab3: number = 800; //500
@@ -36,6 +40,7 @@ export class CptComponent {
   diferencialista: number = 0;
   muestraformulario = true;
   muestraprograma = true;
+  tiempobloquesDemo: number = 57000;
   tiempobloque1: number = 89000; //222500
   tiempobloque2: number = 356000;
   tiempobloque3: number = 71200;
@@ -66,6 +71,8 @@ export class CptComponent {
 
   verMLprome:any;
 
+  botonterminar:boolean = false;
+
 
   muestrainforme: boolean = false;
   tiraletras={}; //objeto
@@ -79,6 +86,15 @@ export class CptComponent {
 
   idpaciente:any;
   cadena:any;
+
+  nombreBoton: string = "Guía"
+  mostrarBotonDemo: number = 0;
+  texts: string[] = ["","Recuerda presionar el mando o la barra espaciadora","Cuando en palla veas la letra X, NO debes presionar","Si ves otra letra diferente debes presionar lo más pronto","Si aun no es claro puedes presionar el botón Demo."];
+  currentText: string = this.texts[0];
+  animationClass: string = 'fade-in';
+  private currentIndex: number = 0;
+  private isAnimating: boolean = false;
+  mostrarvideo = 0;
 
   constructor(public letrasTiempoService: LetrasTiempoService, private ctpResultadosService: CtpResultadosService, private apiservice: ApiService, private route: ActivatedRoute){
     
@@ -132,9 +148,12 @@ export class CptComponent {
 
   }
 
-  
-
-  
+  @HostListener('window:keydown', ['$event'])
+  handleKeyDown(event: KeyboardEvent) {
+    if (event.code === 'Space' && this.inicialaprueba) {
+      this.tomosegundoymilisegundo();
+    }
+  }
 
   gnNumAle(){
     
@@ -235,11 +254,18 @@ export class CptComponent {
       
       clearInterval(timerId); 
       this.pasar++;
-      //console.log(this.pasar);
+      console.log(this.pasar);
       //this.muestratodos();
       //this.mostrardivletras=false;// esta linea se borra
       setTimeout(() => {
-        this.todaslasfases(this.pasar) // esta liene da paso a los otros bloques
+
+        if (this.inicialaDemo){
+          
+          this.todaslasfases(this.pasar) // esta liene da paso a los otros bloques
+        }else{
+          this.todaslasfases(7); // esata linea se habilita solo para que se muestre 1 solo bloque y pase al final
+        }
+        //this.todaslasfases(this.pasar) // esta liene da paso a los otros bloques
         //this.todaslasfases(7); // esata linea se habilita solo para que se muestre 1 solo bloque y pase al final
       }, tiempo); // 4000 milisegundos = 4 segundos
     }, tiempobloque); // pausa el proceso repetitivo de la variable timerId*/
@@ -287,7 +313,7 @@ export class CptComponent {
     //const diferenciaEnTexto: string = `${dias} días, ${horas} horas, ${minutos} minutos, ${segundos} segundos, ${milisegundos} milisegundos`;
 
     //console.log( diferenciaEnTexto );
-    //console.log( "LetraID "+this.idprimera+ " caracter "+ caracter +" - > " +diferenciaEnMilisegundos );
+    console.log( "LetraID "+this.idprimera+ " caracter "+ caracter +" - > " +diferenciaEnMilisegundos );
 
     //pidodatosss = this.pidodatos(this.idprimera,caracter,diferenciaEnMilisegundos);
 
@@ -311,7 +337,11 @@ export class CptComponent {
   }
 
   /// DAR CLIC PARA INICIAR LETRAS
-  mostrarTexto(): void {
+  mostrarTexto(ruata:boolean): void { /// pido un valor si es FALSE = demo , si es TRUE = inicia la prueba
+
+    this.mostrarvideo = 0;
+    this.mostrarBotonDemo = 5;
+    this.currentText = this.texts[0];
 
     this.mfase1 = false
     this.mostrartitulo = false;
@@ -334,7 +364,16 @@ export class CptComponent {
     setTimeout(() => { 
       
       clearInterval(timerId); 
-      this.iniciartest();
+      
+      if (ruata){
+        this.iniciartest();
+      }else{
+        //this.mostrartitulo = false;
+       
+        
+        this.iniciarDemo();
+      }
+      
     }, 6000); // pausa el proceso repetitivo de la variable timerId*/
 
   }
@@ -342,10 +381,47 @@ export class CptComponent {
   /// DAR CLIC CORREN LAS LETRAS
   iniciartest(): void{
 
-    //this.mfase1 = true;
+    this.inicialaprueba = true;
+    this.inicialaDemo = true;
     document.body.style.backgroundColor = '#17141e'; // cambio el color del BODY
     this.calulartiempo(this.muestrab1,this.tiempobloque1);// de aqui inicia a correr las letras
     
+  }
+
+  iniciarDemo(): void{
+
+    this.inicialaprueba = true;
+    this.botonterminar = true;
+    document.body.style.backgroundColor = '#17141e'; // cambio el color del BODY
+    this.calulartiempo(this.muestraDemo,this.tiempobloquesDemo);// de aqui inicia a correr las letras
+
+  }
+
+  showNextText(): void {
+    if (this.isAnimating) return; // Previene múltiples clics durante la animación
+
+   
+
+    this.isAnimating = true;
+    // Primero, inicia la animación de salida
+    this.animationClass = 'fade-out';
+
+    // Después de la duración de la animación de salida, cambia el texto y aplica la animación de entrada
+    setTimeout(() => {
+      this.currentIndex = (this.currentIndex + 1) % this.texts.length;
+      this.currentText = this.texts[this.currentIndex];
+      this.animationClass = 'fade-in';
+      this.mostrartitulo = false;
+      this.mostrarvideo++;
+      this.mostrarBotonDemo++;
+      this.nombreBoton = "Siguiente"
+
+      // Espera a que termine la animación de entrada antes de permitir otro clic
+      setTimeout(() => {
+        
+        this.isAnimating = false;
+      }, 900); // Duración de la animación de entrada
+    }, 900); // Duración de la animación de salida
   }
 
   todaslasfases(otra:number){
@@ -388,6 +464,8 @@ export class CptComponent {
 //-----------------------------------------------------------------------------------------------
   
   muestratodos(){
+
+    this.inicialaprueba = false;
      
     this.tiraletras = this.letrasTiempoService.registroletras;
     //console.log(this.tiraletras);
@@ -448,9 +526,16 @@ export class CptComponent {
 
     }
     
-    this.ctpResultadosService.agreagarresultados(form).subscribe(data =>{
-      //console.log(data);
-    })
+    if (this.inicialaDemo){ // si esta activa la demo que es igual a true NO DEBE GUARDAR 
+
+      this.ctpResultadosService.agreagarresultados(form).subscribe(data =>{
+        //console.log(data);
+      });
+
+      this.inicialaDemo = false; // Variablea vuelve a estado inicial
+
+    }
+    
   }
 
   // Función para contar las ocurrencias de la letra 'A'
@@ -537,4 +622,10 @@ export class CptComponent {
   //}//
 
 
+
+  refreshPage() {
+    location.reload();
+  }
+
+  
 }

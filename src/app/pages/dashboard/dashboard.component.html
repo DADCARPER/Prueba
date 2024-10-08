@@ -25,7 +25,7 @@
     <br><br>
     <!-- TABLA DINAMICA-->
     <ag-grid-angular class="ag-theme-quartz" style="height: 650px;" [rowData]="pacientes" [columnDefs]="colDefs" [pagination]="true"
-    [paginationPageSize]="10" [paginationPageSizeSelector]="[10, 50, 100]" (rowDoubleClicked)="activomodal(myModalContent,$event)">
+    [paginationPageSize]="50" [paginationPageSizeSelector]="[10, 50, 100]" (rowDoubleClicked)="activomodal(myModalContent,$event)">
  
     </ag-grid-angular>
 
@@ -94,13 +94,11 @@
               </div>
             </div>
             <div class="mb-3">
-              <label for="correo" class="form-label">Correo electronico</label>
+              <label for="correo" class="form-label">Empresa</label>
               <input type="mail" class="form-control" id="correo" name="correo" formControlName="correoelectronico">
               <div  class="text-danger" *ngIf="formueditar.get('correoelectronico')?.invalid && formueditar.get('correoelectronico')?.touched">
-                <div *ngIf="this.formueditar.get('correoelectronico')?.hasError('required');">Correo obligatorio.</div>
-                <div *ngIf="this.formueditar.get('correoelectronico')?.hasError('minlength');">Ingrese un correo valido.</div>
+                <div *ngIf="this.formueditar.get('correoelectronico')?.hasError('required');">Empresa es obligatorio.</div>
                 <div *ngIf="this.formueditar.get('correoelectronico')?.hasError('maxlength');">Limite excedido.</div>
-                <div *ngIf="this.formueditar.get('correoelectronico')?.hasError('email');">Correo no valido.</div>
               </div>
             </div>
           
@@ -271,9 +269,10 @@
   <div class="modal-footer">
     
     <button type="button" ngbAutofocus class="btn btn-outline-info" (click)="activomodal3(modal3)">Ver Resultados</button>
+    <button type="button" ngbAutofocus class="btn btn-outline-success" (click)="abrirurl()">Iniciar prueba</button>
     <button type="button" ngbAutofocus class="btn btn-outline-warning" (click)="activomodal2(modal2)">Muestra Link</button>
     <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('cancel click')">Cancel</button>
-    <button type="button" ngbAutofocus class="btn btn-primary" (click)="modal.close(guardar())">Ok</button>
+    <button type="button" ngbAutofocus class="btn btn-primary" (click)="modal.close(guardar())">Guardar cambios</button>
   </div>
   </form>
 </ng-template>
@@ -284,7 +283,7 @@
 		<button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
 	</div>
 	<div class="modal-body">
-		<code>{{codigofinal}}</code>
+		<code><a href="{{codigofinal}}" target="_blank">{{codigofinal}}</a></code>
 	</div>
 	<div class="modal-footer">
 		<button type="button" class="btn btn-secondary" (click)="modal.close('Close click')">Close</button>
@@ -293,7 +292,7 @@
 <!-- modal 3 genera link -->
 <ng-template #modal3 let-modal>
 	<div class="modal-header">
-		<h4 class="modal-title">Resultados - {{unpaciente.nombre}} {{unpaciente.apellidos}}</h4>
+		<h5 class="modal-title">Resultados - {{unpaciente.nombre}} {{unpaciente.apellidos}}</h5>
 		<button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
 	</div>
 	<div class="modal-body">
@@ -306,27 +305,32 @@
           <table class="table table-hover">
             <thead>
               <tr>
-                <th scope="col"> - </th>
-                <th scope="col">Omisión %</th>
-                <th scope="col">Comisión %</th>
-                <th scope="col">Tiempo respuesta</th>
-                <th scope="col">Perseveración %</th>
-                <th scope="col">Fecha </th>
-                <th scope="col"> </th>
+                <th scope="col" style="text-align: center;">Prueba</th>
+                <th scope="col" style="text-align: center;">Omisión</th>
+                <th scope="col" style="text-align: center;">Comisión</th>
+                <th scope="col" style="text-align: center;">T. respuesta (ms)</th>
+                <th scope="col" style="text-align: center;">Perseveración</th>
+                <th scope="col" style="text-align: center;">Fecha</th>
+                <th scope="col" style="text-align: center;">Acciones</th>
               </tr>
             </thead>
-            <tbody *ngFor="let resultado of resultados; let i = index;">
+            <tbody *ngFor="let resultado of resultados; let i = index;" style="font-size: 14px;">
               <tr [class.table-success]="resultado.estado == 0">
-              <th scope="col"><font style="vertical-align: inherit;">Prueba {{i+1}}</font></th>
-              <td> {{resultado.omision}} --- {{resultado.porceomision}} % </td>
-              <td> {{resultado.comision}} --- {{resultado.porcecomision}} % </td>
-              <td> {{resultado.tiemporespuesta}} mst</td>
-              <td> {{resultado.perseveracion}} --- {{resultado.porceperseveracion}} % </td>
-              <td> {{resultado.fecha}} </td>
-              <td *ngIf="resultado.estado != 0">
-                <button type="button" class="btn btn-outline-warning btn-sm" (click)="activomodal5(modal5,resultado.ctpid)">
+              <td scope="col" style="text-align: center;">{{i+1}}</td>
+              <td style="text-align: center;"><b> {{resultado.omision}}</b><br>{{resultado.porceomision | number:'1.2-2'}}% </td>
+              <td style="text-align: center;"><b> {{resultado.comision}}</b><br>{{resultado.porcecomision | number:'1.2-2'}}% </td>
+              <td style="text-align: center;">{{resultado.tiemporespuesta}}</td>
+              <td style="text-align: center;"><b> {{resultado.perseveracion}}</b><br>{{resultado.porceperseveracion | number:'1.2-2'}}% </td>
+              <td style="text-align: center;"> {{resultado.fecha}} </td>
+              <td style="text-align: center;">
+                <ng-container *ngIf="resultado.estado != 0; else noInforme">
+                  <button type="button" class="btn btn-outline-warning btn-sm" (click)="activomodal5(modal5, resultado.ctpid)">
                     <i class="uil uil-file-check" style="font-size: 20px;"></i> Ver Informe
-                </button>
+                  </button>
+                </ng-container>
+                <ng-template #noInforme>
+                  No genereado
+                </ng-template>
               </td>
               </tr>
             </tbody>
@@ -524,7 +528,7 @@
         <br>
         <div class="row">
           <div class="col-md-12">
-            <div id="grafiDona1" class="card flex justify-content-center">
+            <div id="grafiDona1" class="card flex justify-content-center" style="margin: 0; padding: 0; border: none;">
               <p-chart id="grafico1" type="doughnut" [data]="data1" [options]="options1"></p-chart>
               <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 30px; font-weight: bold;">
                 <h1 style="font-size: 64px;margin-top: 28px;"><b>{{numcentro1}}</b></h1>
@@ -564,7 +568,7 @@
         <br>
         <div class="row">
           <div class="col-md-12">
-            <div id="grafiDona2" class="card flex justify-content-center">
+            <div id="grafiDona2" class="card flex justify-content-center" style="margin: 0; padding: 0; border: none;">
               <p-chart id="grafico2" type="doughnut" [data]="data2" [options]="options2"></p-chart>
               <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 30px; font-weight: bold;">
                 <h1 style="font-size: 64px;margin-top: 28px;"><b>{{numcentro2}}</b></h1>
@@ -604,7 +608,7 @@
         <br>
         <div class="row">
           <div class="col-md-12">
-            <div id="grafiDona3" class="card flex justify-content-center">
+            <div id="grafiDona3" class="card flex justify-content-center" style="border: none;">
               <p-chart id="grafico3" type="doughnut" [data]="data3" [options]="options3"></p-chart>
               <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 30px; font-weight: bold;">
                 <h1 style="font-size: 64px;margin-top: 28px;"><b>{{numcentro3}}</b></h1>
@@ -644,7 +648,7 @@
         <br>
         <div class="row">
           <div class="col-md-12">
-            <div id="grafiDona4" class="card flex justify-content-center">
+            <div id="grafiDona4" class="card flex justify-content-center" style="border: none;">
               <p-chart id="grafico4" type="doughnut" [data]="data4" [options]="options4"></p-chart>
               <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 30px; font-weight: bold;">
                 <h1 style="font-size: 64px;margin-top: 28px;"><b>{{numcentro4}}</b></h1>

@@ -127,16 +127,17 @@ export class DashboardComponent {
 // Column Definitions: Defines the columns to be displayed.
 
 colDefs: ColDef[] =  [
-  { headerName: "#", valueGetter: "node.rowIndex + 1", minWidth: 40, maxWidth: 50  },
+  { headerName: "#", valueGetter: "node.rowIndex + 1", minWidth: 40, maxWidth: 65  },
   { headerName: "Documento", field: "dni", filter: true, floatingFilter: true, suppressHeaderMenuButton: true, suppressFloatingFilterButton:  true,width: 120, minWidth: 80, maxWidth: 140 },
   { field: "nombre", filter: true, floatingFilter: true, suppressHeaderMenuButton: true, suppressFloatingFilterButton:  true,width: 140, minWidth: 100, maxWidth: 250  },
   { field: "apellidos", filter: true, floatingFilter: true, suppressHeaderMenuButton: true, suppressFloatingFilterButton:  true,width: 140, minWidth: 100, maxWidth: 250},
-  { field: "direccion",width: 200, minWidth: 100, maxWidth: 350  },
-  { field: "ciudad",width: 120, minWidth: 120, maxWidth: 160 },
-  { field: "edad",width: 90, minWidth: 80, maxWidth: 140 },
+  { field: "direccion",width: 190, minWidth: 100, maxWidth: 350  },
+  //{ field: "ciudad",width: 110, minWidth: 100, maxWidth: 140 },
+  { field: "edad",width: 80, minWidth: 50, maxWidth: 100 },
   { field: "telefono", filter: true, floatingFilter: true, suppressHeaderMenuButton: true, suppressFloatingFilterButton:  true,width: 125, minWidth: 125, maxWidth: 160 },
-  { field: "correo", filter: true, floatingFilter: true, suppressHeaderMenuButton: true, suppressFloatingFilterButton:  true ,width: 200, minWidth: 100, maxWidth: 350 },
-  { field: "escolaridad",valueFormatter: this.formatoEscolaridad, width: 120, minWidth: 120, maxWidth: 160 }
+  { headerName: "Empresas", field: "correo", filter: true, floatingFilter: true, suppressHeaderMenuButton: true, suppressFloatingFilterButton:  true ,width: 200, minWidth: 100, maxWidth: 350 },
+  { field: "escolaridad",valueFormatter: this.formatoEscolaridad, width: 110, minWidth: 120, maxWidth: 160 },
+  { headerName: "Creado", field: "fechacreado",width: 110, minWidth: 100, maxWidth: 140 }
 ];
 
   ///////////////////////////////////////////////
@@ -166,7 +167,7 @@ colDefs: ColDef[] =  [
     accidentes: ['0',[Validators.required,Validators.maxLength(2),Validators.minLength(1)]],
     antecedentes: ['',[Validators.maxLength(5000)]],
     gravedad: ['',[Validators.maxLength(1),Validators.minLength(1)]],
-    correoelectronico: ['',[Validators.required,Validators.email,Validators.maxLength(35),Validators.minLength(8)]],
+    correoelectronico: ['',[Validators.required,Validators.maxLength(45)]], // IMPORTANTE ACLARA QUE ESTE CAMPO AHORA HACE REFERENCIA AL CAMPO EMRPESA.
     token: ['',[Validators.required,Validators.maxLength(25),Validators.minLength(3)]],
     direccion: ['',[Validators.required,Validators.maxLength(80),Validators.minLength(2)]],
     ciudad: ['',[Validators.required,Validators.maxLength(30),Validators.minLength(3)]],
@@ -223,7 +224,7 @@ colDefs: ColDef[] =  [
 
   cargarpaicentes(){
     this.apiservice.llamopacientespagina(1).subscribe(data=>{
-      //console.log(data);
+      console.log(data);
       this.pacientes= data;
     
   })
@@ -315,7 +316,13 @@ colDefs: ColDef[] =  [
 
     const modalRef: NgbModalRef = this.modalService.open(content,{ size: 'xl', centered: true, scrollable: true });
     this.totalResultadoBaremo = this.cptTotal(this.ultimoElemento.omision,this.ultimoElemento.comision,this.ultimoElemento.tiemporespuesta,this.ultimoElemento.perseveracion)
-    //console.log(this.totalResultadoBaremo[0]);
+    console.log(this.totalResultadoBaremo);
+    //console.log(this.conclusiones(this.totalResultadoBaremo[4],this.totalResultadoBaremo));
+    this.forgafica3.patchValue({
+      conclusiones: this.conclusiones(this.totalResultadoBaremo[4],this.totalResultadoBaremo)
+      //conclusiones: this.conclusiones(50,[70, 40, 60, 40, 50])
+    });
+    //this.forgafica3.patchValue(this.conclusiones(this.totalResultadoBaremo[4],this.totalResultadoBaremo));
     this.cerrarmoda4 = modalRef;
 
     this.graficaRadar1(); // Llamo grafica Radar
@@ -328,10 +335,10 @@ colDefs: ColDef[] =  [
       'atalternante': this.totalResultadoBaremo[3],
       'trespuesta': this.totalResultadoBaremo[2],
       'ctrinhibitorio': this.totalResultadoBaremo[1],
-      'atsostenida2': 50,
-      'atalternante2': 40,
-      'trespuesta2': 66,
-      'ctrinhibitorio2': 33,
+      'atsostenida2': 75,
+      'atalternante2': 70,
+      'trespuesta2': 70,
+      'ctrinhibitorio2': 75,
     });
     this.forgafica2.patchValue({
       'Valor1': this.totalResultadoBaremo[0],
@@ -907,6 +914,13 @@ colDefs: ColDef[] =  [
       hotfixes: ["px_scaling"]
     });
 
+    this.totalResultadoBaremo[0] = this.forgafica2.get('Valor1').value;
+    this.totalResultadoBaremo[3] = this.forgafica2.get('Valor3').value;
+    this.totalResultadoBaremo[2] = this.forgafica2.get('Valor5').value;
+    this.totalResultadoBaremo[1] = this.forgafica2.get('Valor7').value;
+    let promedio = (this.forgafica2.get('Valor1').value + this.forgafica2.get('Valor3').value + this.forgafica2.get('Valor5').value + this.forgafica2.get('Valor7').value) / 4;
+    this.totalResultadoBaremo[4] = parseFloat(promedio.toFixed(0));
+
     let nombreCompletoMayuscula = this.unpaciente.nombre.toUpperCase()+" "+this.unpaciente.apellidos.toUpperCase();
 
     this.captureElement = document.querySelector("#grafiRadar");
@@ -1007,7 +1021,7 @@ colDefs: ColDef[] =  [
       body: data.slice(0), // Cuerpo de la tabla
       // Opciones de la tabla
       margin: { top: 20, left: 114, right: 114, bottom: 20 }, // Margen superior
-      startY: 160, // Posicion en la hoja
+      startY: 120, // Posicion en la hoja
       bodyStyles: {
         lineWidth: 1, // Ancho de borde para el cuerpo de la tabla
       },
@@ -1033,9 +1047,10 @@ colDefs: ColDef[] =  [
     // Especificar la fuente, tamaño y estilo del título
     doc.setFontSize(12);
     const textoLargo = `A continuación, se describe el perfil general del rendimiento en la evaluación cognitiva, el cual contempla procesos atencionales y funciones ejecutivas, el ítem de atención sostenida evidencia una ponderación de los aciertos logrados en la ejecución de la prueba “CPT”. El ítem de Velocidad de procesamiento, el cual se establece a partir del tiempo de respuesta que se otorga posterior a la aparición del estímulo, y el ítem Control inhibitorio, el cual contempla la capacidad de inhibir o bloquear conductas inapropiadas o distractores.`;
-    doc.text(textoLargo,80,420,{ align: 'justify', maxWidth: 645 } );
+    doc.text(textoLargo,80,410,{ align: 'justify', maxWidth: 645 } );
 
     doc.setFontSize(16);
+    doc.setFont("helvetica", "normal", "bold");
     doc.text("Perfil Neurocognitivo",doc.internal.pageSize.getWidth() / 2,580,{ align: 'center' } );
 
 
@@ -1052,35 +1067,36 @@ colDefs: ColDef[] =  [
       doc.addImage('../../assets/bot.png', 'png', 0, pageHeight-100, 816, 100,"bot");
 
       doc.setFontSize(24);
-      doc.text("Perfil Cognitivo",80,200);
+      doc.text("Perfil Cognitivo",80,160);
 
       doc.setFontSize(12);
+      doc.setFont("helvetica", "normal");
       const textoLargo2 = `En este apartado se discrimina por cada habilidad cognitiva evaluada junto con el puntaje correspondiente alcanzado, en una escala de 0-100. Que le permite compararlo frente a un grupo de referencia. Los valores calculados se obtienen a partir de una puntuación global de la prueba y se reajustan a la escala 0-100. A mayor puntuación obtenida, mayor rendimiento.`;
-      doc.text(textoLargo2,80,260,{ align: 'justify', maxWidth: 645 } );
+      doc.text(textoLargo2,80,210,{ align: 'justify', maxWidth: 645 } );
 
       doc.setFontSize(12);
       const textoLargo3 = `La conducción representa un compromiso cognitivo significativo, por el alto nivel de información que se procesa y su flujo constante. A continuación, se describen los procesos cognitivos críticos y claves en el ejercicio de la conducción.`;
-      doc.text(textoLargo3,80,360,{ align: 'justify', maxWidth: 645 } );
+      doc.text(textoLargo3,80,330,{ align: 'justify', maxWidth: 645 } );
 
       doc.setFontSize(16);
       doc.setFont("helvetica", "bold");
-      doc.text("PROCESO ATENCIONAL Y PERCEPTUAL",80,460);
+      doc.text("PROCESO ATENCIONAL Y PERCEPTUAL",80,420);
       doc.setFont("helvetica", "normal");
 
       doc.setFontSize(12);
       const textoLargo4 = `Los procesos atencionales juegan un papel fundamental en la conducción, debido al alto flujo de información que se requiere procesar. La atención es el primer proceso cognitivo, que le permite al conductor, estar en comunicación con su entorno. Este proceso se subdivide en los diferentes tipos de atención.`;
-      doc.text(textoLargo4,80,490,{ align: 'justify', maxWidth: 645 } );
+      doc.text(textoLargo4,80,470,{ align: 'justify', maxWidth: 645 } );
 
       doc.addImage(this.imgData1, 'PNG', 80, 585, 150, 150, "graficadona1");
 
       doc.setFont("helvetica","bold");
       doc.setFontSize(16);
-      doc.text("Atención sostenida",260,610);
+      doc.text("Atención sostenida",260,590);
       doc.setFont("helvetica", "normal");
 
       doc.setFontSize(12);
       const textoLargo5 = `Hace referencia a la capacidad de atender a un mismo estimulo durante un largo periodo de tiempo. El conductor `+nombreCompletoMayuscula+` obtuvo una puntuación `+this.rangoTotal(this.totalResultadoBaremo[0])+` en esta habilidad, lo que se relaciona con una `+this.califiacionTotal(this.totalResultadoBaremo[0])+` capacidad para enfocarse   en la información relevante mientras se omiten los   elementos distractores.`;
-      doc.text(textoLargo5,260,650,{ align: 'justify', maxWidth: 465 } );
+      doc.text(textoLargo5,260,630,{ align: 'justify', maxWidth: 465 } );
 
       doc.addImage('../../assets/informe3.png', 'png', (doc.internal.pageSize.width - 200) / 2, 750, 200, 200,"celular");
 
@@ -1092,25 +1108,25 @@ colDefs: ColDef[] =  [
       doc.addImage('../../assets/bot.png', 'png', 0, pageHeight-100, 816, 100,"bot");
 
 
-      doc.addImage(this.imgData2, 'PNG', 80, 200, 150, 150, "graficadona2");
+      doc.addImage(this.imgData2, 'PNG', 80, 160, 150, 150, "graficadona2");
 
       doc.setFont("helvetica","bold");
       doc.setFontSize(16);
-      doc.text("Agudeza visual",260,210);
+      doc.text("Agudeza visual",260,170);
       doc.setFont("helvetica","normal");
 
       doc.setFontSize(12);
       const textoLargo6 = `Hace referencia a la capacidad para percibir estímulos visuales de manera oportuna y detectar aquellos que se consideran relevantes de los irrelevantes. El conductor `+nombreCompletoMayuscula+` obtuvo una puntuación `+this.rangoTotal(this.totalResultadoBaremo[3])+` en esta habilidad. Lo que se relaciona con una `+this.califiacionTotal(this.totalResultadoBaremo[3])+` capacidad de identificar de manera oportuna obstáculos o elementos de riesgo en la vía.`;
-      doc.text(textoLargo6,260,250,{ align: 'justify', maxWidth: 465 } );
+      doc.text(textoLargo6,260,210,{ align: 'justify', maxWidth: 465 } );
 
       doc.setFont("helvetica","bold");
       doc.setFontSize(16);
-      doc.text("FUNCIONES EJECUTIVAS",80,400);
+      doc.text("FUNCIONES EJECUTIVAS",80,370);
       doc.setFont("helvetica","normal");
 
       doc.setFontSize(12);
       const textoLargo7 = `Las funciones ejecutivas obedecen a aquellas funciones psicológicas superiores, son las encargadas de monitorear y regular los demás procesos cognitivos. Gracias a estos procesos un conductor puede ajustar su conducta de acuerdo con las exigencias del entorno, es decir, regular su velocidad, abstenerse de realizar maniobras peligrosas y establecer estrategias efectivas para la solución de problemas en la vía.`;
-      doc.text(textoLargo7,80,440,{ align: 'justify', maxWidth: 645 } );
+      doc.text(textoLargo7,80,410,{ align: 'justify', maxWidth: 645 } );
 
       doc.addImage(this.imgData3, 'PNG', 80, 550, 150, 150, "graficadona3");
 
@@ -1142,31 +1158,33 @@ colDefs: ColDef[] =  [
       doc.addImage('../../assets/bot.png', 'png', 0, pageHeight-100, 816, 100,"bot");
 
       doc.setFontSize(24);
-      doc.text("Conclusiones",80,200);
+      doc.setFont("helvetica", "normal", "bold");
+      doc.text("Conclusiones",80,160);
+      doc.setFont("helvetica", "normal");
 
       doc.setFontSize(12);
-      const textoLargo10 = `Según los datos recogidos, el conductor `+nombreCompletoMayuscula+` obtuvo una puntuación general de `+this.totalResultadoBaremo[4]+`, lo que lo ubica en el rango `+this.rangoTotal(this.totalResultadoBaremo[4])+`, esto indica que se ajusta a los requerimientos del cargo, teniendo en cuenta su desempeño en los perfiles neurocognitivos y neuropsicológicos.`;
-      doc.text(textoLargo10,80,260,{ align: 'justify', maxWidth: 645 } );
+      const textoLargo10 = `Según los datos recogidos, el conductor `+nombreCompletoMayuscula+` obtuvo una puntuación general de `+this.totalResultadoBaremo[4]+`, lo que lo ubica en el rango `+this.rangoTotal(this.totalResultadoBaremo[4])+`, teniendo en cuenta su desempeño en los perfiles neurocognitivos y neuropsicológicos.`;
+      doc.text(textoLargo10,80,220,{ align: 'justify', maxWidth: 645 } );
 
       doc.setFontSize(12);
       let textoLargo11:any;
       if (this.forgafica3.get('conclusiones').value == ""){
-        textoLargo11 = `Se recomienda realizar seguimientos en aquellas áreas donde el rendimiento no alcanzó la mayor puntuación, de modo que sea posible entrenar cognitivamente estas áreas tales como la atención y la velocidad de procesamiento y sea posible potencializar aquellas que ya se encuentran en rangos altos.`;
+        textoLargo11 = this.conclusiones(this.totalResultadoBaremo[4],[this.totalResultadoBaremo[0],this.totalResultadoBaremo[3],this.totalResultadoBaremo[2],this.totalResultadoBaremo[1]]);
       }else{
         textoLargo11 = this.forgafica3.get('conclusiones').value;
       }
-      doc.text(textoLargo11,80,360,{ align: 'justify', maxWidth: 645 } );
+      doc.text(textoLargo11,80,290,{ align: 'left', maxWidth: 645 } );
 
       let estado = this.califiacionTotal(this.totalResultadoBaremo[4]);
       let urlstado:string;
       if (estado === "BUENA"){
-        doc.addImage('../../assets/apto.png', 'png', (doc.internal.pageSize.width - 200) / 2, 460, 200, 80,"estado");
+        doc.addImage('../../assets/apto.png', 'png', (doc.internal.pageSize.width - 200) / 2, 620, 200, 80,"estado");
         urlstado = "apto.png";
       }else if(estado === "ADECUADA"){
-        doc.addImage('../../assets/aptobajorecomendacion.png', 'png', (doc.internal.pageSize.width - 266) / 2, 460, 266, 80,"estado");
+        doc.addImage('../../assets/aptobajorecomendacion.png', 'png', (doc.internal.pageSize.width - 266) / 2, 620, 266, 70,"estado");
         urlstado = "aptobajorecomendacion.png";
       }else{
-        doc.addImage('../../assets/noapto.png', 'png', (doc.internal.pageSize.width - 200) / 2, 460, 200, 70,"estado");
+        doc.addImage('../../assets/noapto.png', 'png', (doc.internal.pageSize.width - 200) / 2, 620, 200, 70,"estado");
         urlstado = "noapto.png";
       }
 
@@ -1235,9 +1253,9 @@ colDefs: ColDef[] =  [
   
       }
 
-      this.resultadostotal.agreagarresultados(form).subscribe(data =>{
-        //console.log(data);
-      })
+      // this.resultadostotal.agreagarresultados(form).subscribe(data =>{
+      //   //console.log(data);
+      // })
 
       this.isLoading=false;
       this.btncreainforme = false; // boton de crear informe se deshabilita 
@@ -1252,6 +1270,36 @@ colDefs: ColDef[] =  [
     //doc.output('datauristring', { filename: 'comprobante.pdf' });
     //doc.output('dataurlnewwindow', { filename: '123.pdf' });
    
+
+  }
+
+  conclusiones(valorpromedio:any, valorarray: number[]): string{
+
+    if (valorpromedio < 40){
+      return "Lo anterior indica que el conductor no se ajusta a los requerimientos del cargo, lo que representa un riesgo para la conducción dando cuenta de la dificultad para enfocarse en la información relevante mientras se omiten los elementos distractores, así como dificultades en la capacidad de responder a tiempo y de manera eficaz frente a los imprevistos presentados en la vía. \n\nNo obstante, se sugiere realizar una re-evaluación neuropsicológica más especifica que permita validar si el rendimiento se debe a una alteración cognitiva o a una variable externa que pudiera afectar su rendimiento.";
+    }else if (valorpromedio > 50){
+      return "Lo anterior indica que se ajusta a los requerimientos del cargo, Sin embargo, se recomienda realizar seguimientos en aquellas áreas donde el rendimiento no alcanzó la mayor puntuación, de modo que sea posible entrenar cognitivamente estas áreas y sea posible potencializar aquellas que ya se encuentran en rangos altos.";
+    }else{
+
+      let menorvalor = Math.min(...valorarray);
+
+      // Obtenemos la posición (índice) del menor valor
+      let posicionMenorValor = valorarray.indexOf(menorvalor);
+
+      if (posicionMenorValor == 0){
+        return "Lo anterior indica si bien su rango se ajusta a los requerimientos del cargo, se deben tener en cuenta los rendimientos por cada variable de manera individual, donde la atención sostenida fue el resultado que generó una discrepancia significativa en su rendimiento cognitivo, lo que refiere a la capacidad para enfocarse en la información relevante mientras se omiten los elementos distractores. \n\nA partir de los anterior, se recomienda realizar una intervención para estos procesos, especialmente los competentes a ATENCIÓN SOSTENIDA para mejorar el rendimiento en la conducción.";
+      }else if (posicionMenorValor == 1){
+        return "CONCLUSION DONDE EL PROBLEMA ES AGUDEZA VISUAL.....";
+      }else if (posicionMenorValor == 2){
+        return "Lo anterior indica si bien su rango se ajusta a los requerimientos del cargo, se deben tener en cuenta los rendimientos por cada variable de manera individual, donde la velocidad de procesamiento fue el resultado que generó una discrepancia significativa en su rendimiento cognitivo, lo que refiere a la capacidad de responder una vez aparece un estímulo. \n\nLa velocidad de procesamiento pudiera ser una variable que se traduce en una dificultad de atención para este ejercicio, por lo que requiere entrenamiento dado que a largo plazo pudiera impactar en todos los procesos cognitivos de manera transversal afectando especialmente a tareas como la planificación de objetivos, resolución de problemas y perseverancia en sus metas personales. A partir de lo anterior, se recomienda realizar una intervención en este proceso cognitivo para mejorar el rendimiento en la conducción.";
+      }else if (posicionMenorValor == 3){
+        return "Lo anterior indica si bien su rango se ajusta a los requerimientos del cargo, se deben tener en cuenta los rendimientos por cada variable de manera individual, donde el Control Inhibitorio, fue el resultado que generó una discrepancia significativa en su rendimiento cognitivo, lo que representa una falencia en su capacidad de ignorar los impulsos o la información irrelevante tanto interna como externa cuando estamos realizando una tarea. \n\nA partir de lo anterior, se recomienda realizar una intervención para estos procesos, especialmente los competentes a CONTROL INHIBITORIO para mejorar el rendimiento en la conducción.";
+      }else{
+        return "no dato"
+        console.log("entro aqui");
+      }
+
+    }
 
   }
 
@@ -1532,6 +1580,9 @@ colDefs: ColDef[] =  [
     let omEAproximado =parseFloat( omE.toFixed(0) );
     let omision = 100 - omEAproximado;
 
+    // Aseguramos que omision no sea menor a 0
+    omision = Math.max(0, omision);
+
     let coM:number = (comision * 100) / 38;
     let coMproximado =parseFloat( coM.toFixed(0) );
     let contInh = 100 - coMproximado;
@@ -1683,7 +1734,7 @@ colDefs: ColDef[] =  [
       body: data.slice(0), // Cuerpo de la tabla
       // Opciones de la tabla
       margin: { top: 20, left: 114, right: 114, bottom: 20 }, // Margen superior
-      startY: 160, // Posicion en la hoja
+      startY: 120, // Posicion en la hoja
       bodyStyles: {
         lineWidth: 1, // Ancho de borde para el cuerpo de la tabla
       },
@@ -1709,9 +1760,10 @@ colDefs: ColDef[] =  [
     // Especificar la fuente, tamaño y estilo del título
     doc.setFontSize(12);
     const textoLargo = `A continuación, se describe el perfil general del rendimiento en la evaluación cognitiva, el cual contempla procesos atencionales y funciones ejecutivas, el ítem de atención sostenida evidencia una ponderación de los aciertos logrados en la ejecución de la prueba “CPT”. El ítem de Velocidad de procesamiento, el cual se establece a partir del tiempo de respuesta que se otorga posterior a la aparición del estímulo, y el ítem Control inhibitorio, el cual contempla la capacidad de inhibir o bloquear conductas inapropiadas o distractores.`;
-    doc.text(textoLargo,80,420,{ align: 'justify', maxWidth: 645 } );
+    doc.text(textoLargo,80,410,{ align: 'justify', maxWidth: 645 } );
 
     doc.setFontSize(16);
+    doc.setFont("helvetica", "normal", "bold");
     doc.text("Perfil Neurocognitivo",doc.internal.pageSize.getWidth() / 2,580,{ align: 'center' } );
 
 
@@ -1728,35 +1780,36 @@ colDefs: ColDef[] =  [
       doc.addImage('../../assets/bot.png', 'png', 0, pageHeight-100, 816, 100,"bot");
 
       doc.setFontSize(24);
-      doc.text("Perfil Cognitivo",80,200);
+      doc.text("Perfil Cognitivo",80,160);
 
       doc.setFontSize(12);
+      doc.setFont("helvetica", "normal");
       const textoLargo2 = `En este apartado se discrimina por cada habilidad cognitiva evaluada junto con el puntaje correspondiente alcanzado, en una escala de 0-100. Que le permite compararlo frente a un grupo de referencia. Los valores calculados se obtienen a partir de una puntuación global de la prueba y se reajustan a la escala 0-100. A mayor puntuación obtenida, mayor rendimiento.`;
-      doc.text(textoLargo2,80,260,{ align: 'justify', maxWidth: 645 } );
+      doc.text(textoLargo2,80,210,{ align: 'justify', maxWidth: 645 } );
 
       doc.setFontSize(12);
       const textoLargo3 = `La conducción representa un compromiso cognitivo significativo, por el alto nivel de información que se procesa y su flujo constante. A continuación, se describen los procesos cognitivos críticos y claves en el ejercicio de la conducción.`;
-      doc.text(textoLargo3,80,360,{ align: 'justify', maxWidth: 645 } );
+      doc.text(textoLargo3,80,330,{ align: 'justify', maxWidth: 645 } );
 
       doc.setFontSize(16);
       doc.setFont("helvetica", "bold");
-      doc.text("PROCESO ATENCIONAL Y PERCEPTUAL",80,460);
+      doc.text("PROCESO ATENCIONAL Y PERCEPTUAL",80,420);
       doc.setFont("helvetica", "normal");
 
       doc.setFontSize(12);
       const textoLargo4 = `Los procesos atencionales juegan un papel fundamental en la conducción, debido al alto flujo de información que se requiere procesar. La atención es el primer proceso cognitivo, que le permite al conductor, estar en comunicación con su entorno. Este proceso se subdivide en los diferentes tipos de atención.`;
-      doc.text(textoLargo4,80,490,{ align: 'justify', maxWidth: 645 } );
+      doc.text(textoLargo4,80,470,{ align: 'justify', maxWidth: 645 } );
 
       doc.addImage(this.imgData1, 'PNG', 80, 585, 150, 150, "graficadona1");
 
       doc.setFont("helvetica","bold");
       doc.setFontSize(16);
-      doc.text("Atención sostenida",260,610);
+      doc.text("Atención sostenida",260,590);
       doc.setFont("helvetica", "normal");
 
       doc.setFontSize(12);
       const textoLargo5 = `Hace referencia a la capacidad de atender a un mismo estimulo durante un largo periodo de tiempo. El conductor `+nombreCompletoMayuscula.toUpperCase()+` obtuvo una puntuación `+this.tomodatosdescarga.rango1+` en esta habilidad, lo que se relaciona con una `+this.tomodatosdescarga.calificacion1+` capacidad para enfocarse   en la información relevante mientras se omiten los   elementos distractores.`;
-      doc.text(textoLargo5,260,650,{ align: 'justify', maxWidth: 465 } );
+      doc.text(textoLargo5,260,630,{ align: 'justify', maxWidth: 465 } );
 
       doc.addImage('../../assets/informe3.png', 'png', (doc.internal.pageSize.width - 200) / 2, 750, 200, 200,"celular");
 
@@ -1768,25 +1821,25 @@ colDefs: ColDef[] =  [
       doc.addImage('../../assets/bot.png', 'png', 0, pageHeight-100, 816, 100,"bot");
 
 
-      doc.addImage(this.imgData2, 'PNG', 80, 200, 150, 150, "graficadona2");
+      doc.addImage(this.imgData2, 'PNG', 80, 160, 150, 150, "graficadona2");
 
       doc.setFont("helvetica","bold");
       doc.setFontSize(16);
-      doc.text("Agudeza visual",260,210);
+      doc.text("Agudeza visual",260,170);
       doc.setFont("helvetica","normal");
 
       doc.setFontSize(12);
       const textoLargo6 = `Hace referencia a la capacidad para percibir estímulos visuales de manera oportuna y detectar aquellos que se consideran relevantes de los irrelevantes. El conductor `+nombreCompletoMayuscula.toUpperCase()+` obtuvo una puntuación `+this.tomodatosdescarga.rango2+` en esta habilidad. Lo que se relaciona con una `+this.tomodatosdescarga.calificacion2+` capacidad de identificar de manera oportuna obstáculos o elementos de riesgo en la vía.`;
-      doc.text(textoLargo6,260,250,{ align: 'justify', maxWidth: 465 } );
+      doc.text(textoLargo6,260,210,{ align: 'justify', maxWidth: 465 } );
 
       doc.setFont("helvetica","bold");
       doc.setFontSize(16);
-      doc.text("FUNCIONES EJECUTIVAS",80,400);
+      doc.text("FUNCIONES EJECUTIVAS",80,370);
       doc.setFont("helvetica","normal");
 
       doc.setFontSize(12);
       const textoLargo7 = `Las funciones ejecutivas obedecen a aquellas funciones psicológicas superiores, son las encargadas de monitorear y regular los demás procesos cognitivos. Gracias a estos procesos un conductor puede ajustar su conducta de acuerdo con las exigencias del entorno, es decir, regular su velocidad, abstenerse de realizar maniobras peligrosas y establecer estrategias efectivas para la solución de problemas en la vía.`;
-      doc.text(textoLargo7,80,440,{ align: 'justify', maxWidth: 645 } );
+      doc.text(textoLargo7,80,410,{ align: 'justify', maxWidth: 645 } );
 
       doc.addImage(this.imgData3, 'PNG', 80, 550, 150, 150, "graficadona3");
 
@@ -1818,31 +1871,30 @@ colDefs: ColDef[] =  [
       doc.addImage('../../assets/bot.png', 'png', 0, pageHeight-100, 816, 100,"bot");
 
       doc.setFontSize(24);
-      doc.text("Conclusiones",80,200);
+      doc.setFont("helvetica", "normal", "bold");
+      doc.text("Conclusiones",80,160);
+      doc.setFont("helvetica", "normal");
 
       doc.setFontSize(12);
-      const textoLargo10 = `Según los datos recogidos, el conductor `+nombreCompletoMayuscula.toUpperCase()+` obtuvo una puntuación general de `+this.tomodatosdescarga.calificaciontotal+`, lo que lo ubica en el rango `+this.tomodatosdescarga.rangototal+`, esto indica que se ajusta a los requerimientos del cargo, teniendo en cuenta su desempeño en los perfiles neurocognitivos y neuropsicológicos.`;
-      doc.text(textoLargo10,80,260,{ align: 'justify', maxWidth: 645 } );
+      const textoLargo10 = `Según los datos recogidos, el conductor `+nombreCompletoMayuscula.toUpperCase()+` obtuvo una puntuación general de `+this.tomodatosdescarga.calificaciontotal+`, lo que lo ubica en el rango `+this.tomodatosdescarga.rangototal+`, teniendo en cuenta su desempeño en los perfiles neurocognitivos y neuropsicológicos.`;
+      doc.text(textoLargo10,80,220,{ align: 'justify', maxWidth: 645 } );
 
       doc.setFontSize(12);
-      let textoLargo11:any;
-      if (this.forgafica3.get('conclusiones').value == ""){
-        textoLargo11 = `Se recomienda realizar seguimientos en aquellas áreas donde el rendimiento no alcanzó la mayor puntuación, de modo que sea posible entrenar cognitivamente estas áreas tales como la atención y la velocidad de procesamiento y sea posible potencializar aquellas que ya se encuentran en rangos altos.`;
-      }else{
-        textoLargo11 = this.forgafica3.get('conclusiones').value;
-      }
-      doc.text(textoLargo11,80,360,{ align: 'justify', maxWidth: 645 } );
+      
+      const textoLargo11 = this.tomodatosdescarga.conclusiones;
+      
+      doc.text(textoLargo11,80,290,{ align: 'left', maxWidth: 645 } );
 
       let estado = this.califiacionTotal(this.tomodatosdescarga.calificaciontotal);
  
       if (estado === "BUENA"){
-        doc.addImage('../../assets/apto.png', 'png', (doc.internal.pageSize.width - 200) / 2, 460, 200, 80,"estado");
+        doc.addImage('../../assets/apto.png', 'png', (doc.internal.pageSize.width - 200) / 2, 620, 200, 80,"estado");
      
       }else if(estado === "ADECUADA"){
-        doc.addImage('../../assets/aptobajorecomendacion.png', 'png', (doc.internal.pageSize.width - 266) / 2, 460, 266, 80,"estado");
+        doc.addImage('../../assets/aptobajorecomendacion.png', 'png', (doc.internal.pageSize.width - 266) / 2, 620, 266, 70,"estado");
    
       }else{
-        doc.addImage('../../assets/noapto.png', 'png', (doc.internal.pageSize.width - 200) / 2, 460, 200, 70,"estado");
+        doc.addImage('../../assets/noapto.png', 'png', (doc.internal.pageSize.width - 200) / 2, 620, 200, 70,"estado");
 
       }
 
@@ -1867,6 +1919,15 @@ colDefs: ColDef[] =  [
     }, 4000);
 
     
+  }
+
+
+  abrirurl(){
+  
+    let urlbase = "https://test-ctp.prevencionvialintegral.com/ctp?dni=";
+    this.codigofinal = urlbase + this.unpaciente.dni;
+    window.open(this.codigofinal, '_blank');
+
   }
   
 

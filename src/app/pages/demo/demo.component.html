@@ -1,0 +1,47 @@
+<div class="container" *ngIf="muestraprograma">
+    <div class="row">
+      <div class="col text-center">
+        
+          <p class="display-3" [ngClass]="{'fade-in': true}" *ngIf="mostrartitulo" >Bienvenido a la prueba CPT.</p>
+          <br>
+          <p style="font-size: 26px;" [ngClass]="{'fade-in': true}" *ngIf="mostrartitulo" class="lead">Durante la prueba, en la pantalla irán apareciendo letras a velocidad variable. El objetivo de la prueba consiste en pulsar en la pantalla tan rápido como sea posible cada vez que aparezca una letra, exceptuando la letra "X".</p>
+          <p class="lead"></p>
+          
+            
+            <p class="display-1" [ngClass]="{'fade-in': mostrar}" *ngIf="mostrar">{{ textosamostrar[cuentatexto] }}</p>
+          
+            <p class="display-1" [ngClass]="animationClass">{{ currentText }}</p>
+
+            
+            <video *ngIf="mostrarvideo == 1" width="640" height="360" autoplay loop muted playsinline>
+              <source src="./assets/pulsar.mp4" type="video/mp4">
+              Tu navegador no soporta la etiqueta de video.
+            </video>
+            <video *ngIf="mostrarvideo == 2" width="640" height="360" autoplay loop muted playsinline>
+              <source src="./assets/pulsarX.mp4" type="video/mp4">
+              Tu navegador no soporta la etiqueta de video.
+            </video>
+            <video *ngIf="mostrarvideo == 3" width="640" height="360" autoplay loop muted playsinline>
+              <source src="./assets/pulsarM.mp4" type="video/mp4">
+              Tu navegador no soporta la etiqueta de video.
+            </video>
+          
+          
+            
+        
+      </div>
+    </div>
+</div>
+
+<div class="col text-center">
+  
+  <footer class="mt-auto text-50">
+            <button class="btn btn-lg btn-outline-dark" *ngIf="mostrarBotonDemo != 4" style="margin-right: 10px;" (click)="showNextText()">{{nombreBoton}}</button>
+            <button class="btn btn-lg btn-outline-dark"  *ngIf="mostrarBotonDemo == 4" style="margin-right: 10px;" (click)="mostrarTexto()"><i class="bi bi-play-fill"></i>DEMO</button>
+            <button class="btn btn-lg btn-outline-dark"  *ngIf="mostrarBoton" (click)="mostrarTexto()"><i class="bi bi-play-fill"></i>INICIAR</button>
+            <br>
+            <br>
+    <p>© 2024 Todos los derechos reservados ES&VA Soluciones Integrales S.A.S.</p>
+    <!--<button (click)="muestratodos()">muestrame lo guardado</button>-->
+  </footer>
+</div>
